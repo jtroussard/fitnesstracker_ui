@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/landing/LandingPage';
 import AuthRoutes from './routes/AuthRoutes';
 import DashboardRoutes from './routes/DashboardRoutes';
-import { jwtDecode } from 'jwt-decode'; // Correct import
+import { jwtDecode } from 'jwt-decode';
 
 function App() {
   const [userRoles, setUserRoles] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt'));
 
-  // Load roles from localStorage on mount
+  // On mount, load roles from localStorage if a JWT exists
   useEffect(() => {
     const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
     setUserRoles(storedRoles);
   }, []);
 
-  // Centralized API call for login
+  // Centralized login handler
   const handleLogin = async (credentials) => {
-    console.log(`From App.js :: invoking handleLogin with ${JSON.stringify(credentials)}`)
+    console.log(`From App.js :: handleLogin invoked with ${JSON.stringify(credentials)}`);
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
@@ -30,44 +30,43 @@ function App() {
       if (!response.ok) throw new Error('Login failed');
 
       const data = await response.json();
-      localStorage.setItem('jwt', data.token);
-
       const decodedToken = jwtDecode(data.token);
       const userRoles = decodedToken.roles || [];
-      localStorage.setItem('roles', JSON.stringify(userRoles));
-      console.log(`From App.js :: stored roles in component state, local storage key "roles" set to |${JSON.stringify(userRoles)}`)
 
+      // Update localStorage and state
+      localStorage.setItem('jwt', data.token);
+      localStorage.setItem('roles', JSON.stringify(userRoles));
       setUserRoles(userRoles);
       setIsAuthenticated(true);
-      console.log(`Login Success ${localStorage.getItem('roles')}, ${isAuthenticated}`)
+
+      console.log(`From App.js :: Login Success, roles set to ${JSON.stringify(userRoles)}`);
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('From App.js :: Login failed:', error);
+      setIsAuthenticated(false);
     }
   };
 
-  // Centralized API call for logout
+  // Centralized logout handler
   const handleLogout = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/logout', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Pass JWT token for server-side logout
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Logout failed');
-      }
+      if (!response.ok) throw new Error('Logout failed');
 
-      // Clear the JWT and roles from localStorage
+      // Clear both state and localStorage
       localStorage.removeItem('jwt');
       localStorage.removeItem('roles');
-
-      // Update authentication state
-      setIsAuthenticated(false);
       setUserRoles([]);
+      setIsAuthenticated(false);
+
+      console.log('From App.js :: Logout success');
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('From App.js :: Logout failed:', error);
     }
   };
 
@@ -75,14 +74,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-
-        {/* Pass handleLogin to AuthRoutes */}
         <Route path="/auth/*" element={<AuthRoutes onLogin={handleLogin} />} />
-
-        {/* Pass handleLogout to DashboardRoutes */}
         <Route path="/boards/*" element={<DashboardRoutes onLogout={handleLogout} />} />
-
-        {/* Catch-all Route */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
       </Routes>
     </Router>
