@@ -1,0 +1,13 @@
+/* src/styles/global.css */
+.btn {
+    display: flex;
+    align-items: center;  /* Vertically center icon and text */
+    justify-content: center;
+    gap: 8px;             /* Space between icon and text */
+  }
+  
+  .btn .material-icons {
+    font-size: 1.2rem;    /* Adjust icon size */
+    vertical-align: middle;
+  }
+  

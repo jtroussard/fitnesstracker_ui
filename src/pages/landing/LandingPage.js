@@ -8,7 +8,6 @@ const LandingPage = () => {
       {/* Header Section */}
       <header className="text-center my-4">
         <h1>Fitness Journal</h1>
-        <Navbar />
       </header>
 
       {/* Main Content */}

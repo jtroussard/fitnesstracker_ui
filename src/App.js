@@ -4,6 +4,7 @@ import LandingPage from './pages/landing/LandingPage';
 import AuthRoutes from './routes/AuthRoutes';
 import DashboardRoutes from './routes/DashboardRoutes';
 import { jwtDecode } from 'jwt-decode';
+import Navbar from './components/common/Navbar';
 
 function App() {
   const [userRoles, setUserRoles] = useState([]);
@@ -72,6 +73,7 @@ function App() {
 
   return (
     <Router>
+      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth/*" element={<AuthRoutes onLogin={handleLogin} />} />
