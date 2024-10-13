@@ -1,8 +1,8 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './LandingPage';
-import AdminDashboard from './AdminDashboard';
-import MemberDashboard from './MemberDashboard';
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import AdminDashboard from './pages/dashboard/AdminDashboard';
+import MemberDashboard from './pages/dashboard/MemberDashboard';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   return (

@@ -1,4 +1,15 @@
-# Getting Started with Create React App
+# Fittness Quest Tracker
+
+## Project Structure
+- **components/**: Contains reusable UI components.
+  - **common/**: Shared components such as buttons, error boundaries, etc.
+- **pages/**: Contains all page components (e.g., login, register, dashboards).
+  - **auth/**: Pages related to authentication (login, register).
+  - **dashboard/**: Admin and member dashboard pages.
+- **services/**: Contains API or utility functions to interact with external services.
+
+
+# (Original README from react app creator) Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
