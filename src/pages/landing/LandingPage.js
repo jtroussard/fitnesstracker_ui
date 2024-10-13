@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import Login from './auth/Login';
-import Logout from './auth/Logout';
-import Register from './auth/Register';
+import Login from '../auth/Login';
+import Logout from '../auth/Logout';
+import Register from '../auth/Register';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../Navbar'; // Use the new Navbar component
+import Navbar from '../../components/common/Navbar'; // Use the new Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is included
 
 const LandingPage = () => {

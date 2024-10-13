@@ -2,7 +2,7 @@ import './App.css';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
 import MemberDashboard from './pages/dashboard/MemberDashboard';
-import LandingPage from './pages/LandingPage';
+import LandingPage from './pages/landing/LandingPage';
 
 function App() {
   return (
