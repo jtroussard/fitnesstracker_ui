@@ -1,10 +1,12 @@
 // redirect to login after successful registeration
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [memberName, setMemberName] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,6 +30,7 @@ const Register = () => {
       }
 
       alert('Member registered successfully!');
+      navigate('/')
     } catch (error) {
       console.error('Registration failed:', error);
       alert('Registration failed, please try again.');

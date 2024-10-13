@@ -1,4 +1,11 @@
-/* src/styles/global.css */
+/* Navigation */
+.nav-link-no-style {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+/* Buttons */
 .btn {
     display: flex;
     align-items: center;  /* Vertically center icon and text */

@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';  // Import AuthContext
+import MainButton from '../../components/common/MainButton';
 
-const Logout = ({ onLogout }) => {
-  const handleLogout = () => {
-    // Delegate the logout process to App.js via the onLogout prop
-    onLogout();
-  };
+const Logout = () => {
+  const { handleLogout } = useContext(AuthContext);  // Use AuthContext
 
   return (
-    <button className="btn btn-danger" onClick={handleLogout}>
-      Logout
-    </button>
+    <MainButton 
+    text="Logout"
+    onClick={handleLogout}
+    className="btn-danger"
+    icon="logout"
+    />
   );
 };
 

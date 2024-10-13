@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';  // Correctly use useNavigate
+import { AuthContext } from '../../context/AuthContext';  // Import AuthContext
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [memberName, setMemberName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);  // Handle errors
+  const { handleLogin } = useContext(AuthContext);  // Use AuthContext
   const navigate = useNavigate();  // For redirection
 
   const handleSubmit = async (event) => {
-    console.log(`From Login.js :: handleSubmit called`);
+    console.log(`From Login.js :: handleSubmit called with ${event.type}`);
     event.preventDefault();
 
     if (!memberName || !password) {
-      console.log('From Login.js :: handleSubmit failed - missing memberName or password');
       setError('Please fill in all fields.');
       return;
     }
 
-    // Call onLogin from App.js to process login
-    console.log(`From Login.js :: onLogin invoked with memberName=${memberName}, password=${password}`);
-    await onLogin({ memberName, password });
+    const loginSuccess = await handleLogin({ memberName, password });
 
-    // Redirect after login based on the updated state (roles will already be in state)
-    const userRoles = JSON.parse(localStorage.getItem('roles')) || [];
-    console.log(`From Login.js :: Redirecting based on roles ${JSON.stringify(userRoles)}`);
-    if (userRoles.includes('ROLE_ADMIN')) {
-      navigate('/boards/admin');
-    } else if (userRoles.includes('ROLE_MEMBER')) {
-      navigate('/boards/members');
+    if (loginSuccess) {
+      const userRoles = JSON.parse(localStorage.getItem('roles')) || [];
+      if (userRoles.includes('ROLE_ADMIN')) {
+        navigate('/boards/admin');
+      } else if (userRoles.includes('ROLE_MEMBER')) {
+        navigate('/boards/members');
+      } else {
+        navigate('/');
+      }
     } else {
-      navigate('/');
+      setError('Login failed. Please check your credentials and try again.');
     }
-
-    console.log('From Login.js :: handleSubmit finished');
   };
 
   return (
@@ -49,7 +48,6 @@ const Login = ({ onLogin }) => {
                 <div className="mb-3">
                   <label htmlFor="login-memberName" className="form-label">Username</label>
                   <input
-                    autoComplete="off"
                     type="text"
                     className="form-control"
                     id="login-memberName"
@@ -61,7 +59,6 @@ const Login = ({ onLogin }) => {
                 <div className="mb-3">
                   <label htmlFor="login-password" className="form-label">Password</label>
                   <input
-                    autoComplete="off"
                     type="password"
                     className="form-control"
                     id="login-password"
