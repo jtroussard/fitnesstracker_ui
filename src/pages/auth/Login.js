@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';  // Correctly use useNavigate
 import { AuthContext } from '../../context/AuthContext';  // Import AuthContext
+import { toast } from 'react-toastify';
+
 
 const Login = () => {
   const [memberName, setMemberName] = useState('');
@@ -14,25 +16,23 @@ const Login = () => {
     event.preventDefault();
 
     if (!memberName || !password) {
-      setError('Please fill in all fields.');
+      toast.error('Please fill in all fields.');
       return;
     }
 
-    const loginSuccess = await handleLogin({ memberName, password });
-
-    if (loginSuccess) {
-      const userRoles = JSON.parse(localStorage.getItem('roles')) || [];
-      if (userRoles.includes('ROLE_ADMIN')) {
-        navigate('/boards/admin');
-      } else if (userRoles.includes('ROLE_MEMBER')) {
-        navigate('/boards/members');
-      } else {
-        navigate('/');
-      }
+    await handleLogin({ memberName, password });
+    const userRoles = JSON.parse(localStorage.getItem('roles')) || [];
+    if (userRoles.includes('ROLE_ADMIN')) {
+      navigate('/boards/admin');
+    } else if (userRoles.includes('ROLE_MEMBER')) {
+      navigate('/boards/members');
     } else {
-      setError('Login failed. Please check your credentials and try again.');
+      navigate('/auth/login');
     }
+
+    console.log('From Login.js :: handleSubmit finished');
   };
+
 
   return (
     <div className="container mt-5">

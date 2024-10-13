@@ -1,23 +1,22 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode'; // Correct import
+import { jwtDecode } from 'jwt-decode';  // The correct import as per our design
+import { toast } from 'react-toastify';
 
-// Create the AuthContext
+// Create AuthContext
 export const AuthContext = createContext();
 
-// AuthProvider component to wrap the app and provide authentication state
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt'));
   const [userRoles, setUserRoles] = useState([]);
 
-  // Load roles from localStorage on component mount
   useEffect(() => {
     const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
     setUserRoles(storedRoles);
   }, []);
 
-  // Centralized API call for login
+  // Centralized login logic - NO RETURN VALUE
   const handleLogin = async (credentials) => {
-    console.log(`From AuthContext.js :: invoking handleLogin with ${JSON.stringify(credentials)}`);
+    console.log('AuthContext: handleLogin called');
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
@@ -27,7 +26,10 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(credentials),
       });
 
-      if (!response.ok) throw new Error('Login failed');
+      if (!response.ok) {
+        toast.error('Login failed. Please check your credentials and try again.');
+        throw new Error('Login failed');
+      } 
 
       const data = await response.json();
       localStorage.setItem('jwt', data.token);
@@ -36,42 +38,35 @@ export const AuthProvider = ({ children }) => {
       const userRoles = decodedToken.roles || [];
       localStorage.setItem('roles', JSON.stringify(userRoles));
 
-      setUserRoles(userRoles);
       setIsAuthenticated(true);
-
-      console.log(`From AuthContext.js :: Login successful, roles set to ${JSON.stringify(userRoles)}`);
-      return true;
+      setUserRoles(userRoles);
+      console.log('AuthContext: Login successful');
     } catch (error) {
-      console.error('From AuthContext.js :: Login failed:', error);
-      return false;
+      console.error('AuthContext: Login failed', error);
     }
   };
 
-  // Centralized API call for logout
+  // Centralized logout logic - NO RETURN VALUE
   const handleLogout = async () => {
+    console.log('AuthContext: handleLogout called');
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/logout', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Pass JWT token for server-side logout
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Logout failed');
-      }
+      if (!response.ok) throw new Error('Logout failed');
 
-      // Clear the JWT and roles from localStorage
       localStorage.removeItem('jwt');
       localStorage.removeItem('roles');
 
-      // Update authentication state
       setIsAuthenticated(false);
       setUserRoles([]);
-
-      console.log('From AuthContext.js :: Logout successful');
+      console.log('AuthContext: Logout successful');
     } catch (error) {
-      console.error('From AuthContext.js :: Logout failed:', error);
+      console.error('AuthContext: Logout failed', error);
     }
   };
 
