@@ -1,3 +1,4 @@
+// redirect to login after successful registeration
 import React, { useState } from 'react';
 
 const Register = () => {
@@ -42,22 +43,24 @@ const Register = () => {
       <div className='card-body'>
       <form onSubmit={handleRegister}>
         <div className="mb-3">
-          <label htmlFor="memberName" className="form-label">Member Name</label>
+          <label htmlFor="reg-memberName" className="form-label">Member Name</label>
           <input
+            autoComplete='off'
             type="text"
             className="form-control"
-            id="memberName"
+            id="reg-memberName"
             value={memberName}
             onChange={(e) => setMemberName(e.target.value)}
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="password" className="form-label">Password</label>
+          <label htmlFor="reg-password" className="form-label">Password</label>
           <input
+            autoComplete='off'
             type="password"
             className="form-control"
-            id="password"
+            id="reg-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -66,6 +69,7 @@ const Register = () => {
         <div className="mb-3">
           <label htmlFor="email" className="form-label">Email</label>
           <input
+            autoComplete='off'
             type="email"
             className="form-control"
             id="email"

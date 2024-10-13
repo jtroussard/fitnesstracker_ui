@@ -1,95 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import Login from '../auth/Login';
-import Logout from '../auth/Logout';
-import Register from '../auth/Register';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/common/Navbar'; // Use the new Navbar component
+import React from 'react';
+import Navbar from '../../components/common/Navbar'; // Keep the Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is included
 
 const LandingPage = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt'));
-  const [userRoles, setUserRoles] = useState(JSON.parse(localStorage.getItem('roles')) || []);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      const decodedToken = jwtDecode(jwt);
-      const userRoles = decodedToken.roles || [];
-      setUserRoles(userRoles);
-    }
-  }, []);
-
-  const handleLogin = async (credentials) => {
-    try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) throw new Error('Failed to log in');
-
-      const data = await response.json();
-      localStorage.setItem('jwt', data.token);
-      const decodedToken = jwtDecode(data.token);
-      const userRoles = decodedToken.roles || [];
-      localStorage.setItem('roles', JSON.stringify(userRoles));
-      setIsAuthenticated(true);
-      setUserRoles(userRoles);
-
-      alert('Login Successful!');
-    } catch (error) {
-      console.error('Login failed:', error);
-      alert('Login failed!');
-    }
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('roles');
-    setUserRoles([]);
-  };
-
-  useEffect(() => {
-    if (isAuthenticated && userRoles.includes('ROLE_ADMIN')) {
-      navigate('/admin');
-    } else if (isAuthenticated && userRoles.includes('ROLE_MEMBER')) {
-      navigate('/member');
-    }
-  }, [isAuthenticated, userRoles, navigate]);
-
   return (
     <div className="container">
       {/* Header Section */}
       <header className="text-center my-4">
         <h1>Fitness Journal</h1>
-        <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+        <Navbar />
       </header>
 
       {/* Main Content */}
       <main>
-        {/* Auth Section */}
-        <div className="mb-5">
-          {!isAuthenticated ? (
-            <div className="row justify-content-center">
-              <div className="col-md-4">
-                <Register />
-              </div>
-              <div className="col-md-4">
-                <Login onLogin={handleLogin} />
-              </div>
-            </div>
-          ) : (
-            <div className="text-center">
-              <Logout onLogout={handleLogout} />
-            </div>
-          )}
-        </div>
+        {/* Welcome Section */}
+        <section className="mb-5 text-center">
+          <h2>Welcome to Fitness Journal</h2>
+          <p>Your personal fitness tracking tool. Log your activities and nutrition to stay on top of your fitness goals.</p>
+        </section>
 
         {/* Featured Section */}
         <section className="mb-5 text-center">

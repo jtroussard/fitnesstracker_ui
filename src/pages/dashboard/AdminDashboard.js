@@ -1,17 +1,14 @@
 import React from 'react';
+import Logout from '../auth/Logout'; // Import the Logout component
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ onLogout }) => {
   return (
     <div className="container mt-5">
-      <div className="card">
-        <div className="card-header">
-          <h2>Admin Dashboard</h2>
-        </div>
-        <div className="card-body">
-          <p>Welcome, Admin! You have access to this page because you have the ADMIN role.</p>
-          {/* Add admin-specific content here */}
-        </div>
-      </div>
+      <h2>Admin Dashboard</h2>
+      {/* Admin dashboard content */}
+      <p>Welcome, Admin! Here you can manage the application and view admin-specific content.</p>
+      {/* Render the Logout button and pass the onLogout prop */}
+      <Logout onLogout={onLogout} />
     </div>
   );
 };

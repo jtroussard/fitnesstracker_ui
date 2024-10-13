@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Navbar = ({ isAuthenticated, onLogout }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+          <div className="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
       <ul className='navbar-nav'>
         <li className='nav-item me-3'>
           <Link to="/" className='d-flex align-items-center' style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -32,11 +32,11 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
         ) : (
           <>
             <li className='nav-item me-3'>
-              <Link className='d-flex align-items-center' style={{ textDecoration: 'none', color: 'inherit' }} to="/login">
+              <Link className='d-flex align-items-center' style={{ textDecoration: 'none', color: 'inherit' }} to="/auth/login">
               <i className="material-icons">login</i>LOGIN</Link>
             </li>
             <li className='nav-item me-3'>
-              <Link className='d-flex align-items-center' style={{ textDecoration: 'none', color: 'inherit' }} to="/register">
+              <Link className='d-flex align-items-center' style={{ textDecoration: 'none', color: 'inherit' }} to="/auth/register">
               <i className="material-icons">how_to_reg</i>REGISTER</Link>
             </li>
           </>

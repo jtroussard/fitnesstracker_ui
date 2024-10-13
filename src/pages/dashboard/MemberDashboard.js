@@ -1,6 +1,7 @@
 import React from 'react';
+import Logout from '../auth/Logout';
 
-const MemberDashboard = () => {
+const MemberDashboard = ({onLogout}) => {
   return (
     <div className="container mt-5">
       <div className="card">
@@ -10,6 +11,7 @@ const MemberDashboard = () => {
         <div className="card-body">
           <p>Welcome, Member! You have access to this page because you have the MEMBER role.</p>
           {/* Add member-specific content here */}
+          <Logout onLogout={onLogout} />
         </div>
       </div>
     </div>
