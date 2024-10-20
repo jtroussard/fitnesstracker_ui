@@ -1,0 +1,17 @@
+.member-dashboard {
+    display: flex;
+    height: 100vh; /* Ensures that the dashboard fills the full viewport height */
+  }
+  
+  .side-nav {
+    width: 250px; /* Adjust the width as needed */
+    background-color: #f8f9fa; /* Optional: Background color for the sidebar */
+    border-right: 1px solid #ddd; /* Optional: Divider between sidebar and main content */
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto; /* Enables scrolling if content is too large */
+  }
+  

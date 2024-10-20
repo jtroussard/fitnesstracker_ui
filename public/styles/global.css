@@ -4,6 +4,19 @@
   color: inherit;
 }
 
+.top-nav {
+  background-color: rgb(207, 207, 207);
+  color: blueviolet;
+  display: flex; /* Use flexbox for horizontal layout */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  padding: 1rem; /* Add padding to create some space around the navbar */
+}
+
+.navbar-fix {
+  padding-top: 0 !important;; /* Remove top padding */
+  padding-bottom: 0 !important;; /* Remove bottom padding */
+}
 
 /* Buttons */
 .btn {

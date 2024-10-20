@@ -1,7 +1,7 @@
 // TODO add a toast when the user is redirected to home, explaining role issue
 import { Routes, Route, Navigate } from 'react-router-dom';
-import AdminDashboard from '../pages/dashboard/AdminDashboard';
-import MemberDashboard from '../pages/dashboard/MemberDashboard';
+import AdminDashboard from '../components/dashboard/admin/AdminDashboard';
+import MemberDashboard from '../components/dashboard/member/MemberDashboard';
 
 const DashboardRoutes = ({onLogout}) => {
     const userRoles = JSON.parse(localStorage.getItem('roles')) || [];
@@ -14,7 +14,7 @@ const DashboardRoutes = ({onLogout}) => {
     return (
         <Routes>
             <Route
-                path="/admin"
+                path="/admin/*"
                 element={userRoles.includes('ROLE_ADMIN') ? (
                     <AdminDashboard onLogout={onLogout}/>
                 ) : (
@@ -24,7 +24,7 @@ const DashboardRoutes = ({onLogout}) => {
             />
 
             <Route
-                path="/members"
+                path="/member/*"
                 element={userRoles.includes('ROLE_MEMBER') ? (
                     <MemberDashboard onLogout={onLogout}/>
                 ) : (

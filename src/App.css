@@ -28,6 +28,31 @@
   color: #61dafb;
 }
 
+.member-dashboard {
+  display: flex;
+  height: 100vh; /* Full height for the dashboard */
+}
+
+.side-nav {
+  width: 250px; /* Adjust as needed */
+}
+
+.nav-link {
+  padding: 0.5rem 1rem;
+}
+
+.main-content {
+  overflow-y: auto; /* Ensures scrolling if content overflows */
+}
+
+.tile {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  padding: 1rem;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +60,6 @@
   to {
     transform: rotate(360deg);
   }
+
+  
 }
