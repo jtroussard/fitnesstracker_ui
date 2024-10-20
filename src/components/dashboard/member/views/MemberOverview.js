@@ -1,54 +1,103 @@
-import React, { useState } from 'react';
-import LargeTile from '../../common/tile/LargeTile';
-import FitnessEntryList from '../content/FitnessEntryList';
-import FitnessEntryDetails from '../content/FitnessEntryDetails';
+import React, { useEffect, useState } from "react";
+import LargeTile from "../../common/tile/LargeTile";
+import FitnessEntryList from "../content/FitnessEntryList";
+import FitnessEntryDetails from "../content/FitnessEntryDetails";
+import { getEntries, saveEntry, updateEntry } from "../../../../services/fitnessEntryService";
 
 const MemberOverview = () => {
-  const [entries, setEntries] = useState([
-    {
-      id: 1,
-      entryDate: '2024-10-01',
-      entryTime: '15:30:00',
-      weight: 70.5,
-      ketoneLevel: 1.5,
-    },
-    {
-      id: 2,
-      entryDate: '2024-10-02',
-      entryTime: '16:00:00',
-      weight: 72.3,
-      ketoneLevel: 1.2,
-    },
-  ]);
+  const [entries, setEntries] = useState([]);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
+
+  useEffect(() => {
+    console.log("MemberOverview :: useEffect (fetching entries)");
+    const fetchEntries = async () => {
+      try {
+        const fetchedEntries = await getEntries();
+        setEntries(fetchedEntries);
+        console.log(
+          "MemberOverview :: useEffect (entries fetched successfully)",
+          fetchedEntries
+        );
+      } catch (error) {
+        console.error(
+          "MemberOverview :: useEffect (error fetching entries)",
+          error
+        );
+        throw error;
+      }
+    };
+
+    fetchEntries();
+  }, []);
 
   const handleSelectEntry = (id) => {
     setSelectedEntryId(id);
   };
 
+  const handleOnClose = () => {
+    setSelectedEntryId(null);
+  }
+
   const handleAddEntry = () => {
     const newEntry = {
-      id: Date.now(),
-      entryDate: '',
-      entryTime: '',
-      weight: '',
-      ketoneLevel: '',
+      id: null,
+      entryDate: "",
+      entryTime: "",
+      weight: "",
+      ketoneLevel: "",
     };
     setEntries([newEntry, ...entries]);
     setSelectedEntryId(newEntry.id);
   };
 
   const handleSaveEntry = (id, updatedEntry) => {
-    setEntries(entries.map(entry => entry.id === id ? { ...entry, ...updatedEntry } : entry));
-    setSelectedEntryId(null);
+    const saveOrUpdateEntry = async () => {
+      try {
+        let response;
+        
+        if (id) {
+          // If the entry has an ID, it's an update (PUT)
+          console.log(`MemberOverview :: handleSaveEntry (updating entry with id = ${id})`);
+          response = await updateEntry(id, updatedEntry);
+          console.log(`MemberOverview :: handleSaveEntry (success updating entry with id = ${id})`);
+        } else {
+          // If there's no ID, it's a new entry (POST)
+          console.log("MemberOverview :: handleSaveEntry (adding new entry)");
+          response = await saveEntry(updatedEntry);
+          console.log("MemberOverview :: handleSaveEntry (success adding new entry)", response);
+        }
+  
+        // Update the entries state with the response
+        setEntries((prevEntries) => {
+          if (id) {
+            // Update the existing entry
+            return prevEntries.map((entry) =>
+              entry.id === id ? { ...entry, ...response } : entry
+            );
+          } else {
+            // Add the new entry to the list
+            return [response, ...prevEntries];
+          }
+        });
+  
+      } catch (error) {
+        console.error("MemberOverview :: handleSaveEntry (error saving or updating entry)", error);
+      } finally {
+        setSelectedEntryId(null);
+      }
+    };
+  
+    // Call the function to perform the save or update operation
+    saveOrUpdateEntry();
   };
+  
 
   const handleDeleteEntry = (id) => {
-    setEntries(entries.filter(entry => entry.id !== id));
+    setEntries(entries.filter((entry) => entry.id !== id));
     setSelectedEntryId(null);
   };
 
-  const selectedEntry = entries.find(entry => entry.id === selectedEntryId);
+  const selectedEntry = entries.find((entry) => entry.id === selectedEntryId);
 
   console.log(`TUNA ENTRIES ${JSON.stringify(entries)}`);
 
@@ -58,20 +107,20 @@ const MemberOverview = () => {
       <div className="row g-3">
         <div className="col-12">
           <LargeTile title="Your Fitness Entries">
-            <FitnessEntryList 
-              entries={entries} 
-              onSelectEntry={handleSelectEntry} 
-              onAddEntry={handleAddEntry} 
+            <FitnessEntryList
+              entries={entries}
+              onSelectEntry={handleSelectEntry}
+              onAddEntry={handleAddEntry}
             />
           </LargeTile>
         </div>
         {selectedEntry && (
           <div className="col-12 mt-3">
-            <LargeTile title="Edit Fitness Entry">
-              <FitnessEntryDetails 
-                entry={selectedEntry} 
-                onSave={handleSaveEntry} 
-                onDelete={handleDeleteEntry} 
+            <LargeTile title="Fitness Entry Inspector" onClose={handleOnClose}>
+              <FitnessEntryDetails
+                entry={selectedEntry}
+                onSave={handleSaveEntry}
+                onDelete={handleDeleteEntry}
               />
             </LargeTile>
           </div>

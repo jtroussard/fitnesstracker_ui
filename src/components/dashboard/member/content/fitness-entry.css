@@ -1,0 +1,11 @@
+.list-group-item {
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+    /* Blue glow */
+    transform: translateY(-2px);
+    /* Slight pop-out effect */
+}

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
-    entryDate: entry.entryDate || '',
-    entryTime: entry.entryTime || '',
-    weight: entry.weight || '',
-    ketoneLevel: entry.ketoneLevel || '',
+    entryDate: entry.entryDate || "",
+    entryTime: entry.entryTime || "",
+    weight: entry.weight || "",
+    ketoneLevel: entry.ketoneLevel || "",
   });
 
   const handleChange = (e) => {
@@ -15,12 +15,18 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
 
   const handleSave = () => {
     const { entryDate, entryTime, weight, ketoneLevel } = formData;
+
+    // Ensure the time is in 'HH:mm' format by trimming to hours and minutes.
+    const formattedTime =
+      entryTime.length > 5 ? entryTime.substring(0, 5) : entryTime;
+
     const updatedEntry = {
       entryDate,
-      entryTime,
+      entryTime: formattedTime, // Now only 'HH:mm'
       weight: parseFloat(weight),
       ketoneLevel: parseFloat(ketoneLevel),
     };
+
     onSave(entry.id, updatedEntry);
   };
 
@@ -34,33 +40,33 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
       <form>
         <div className="mb-3">
           <label>Date</label>
-          <input 
-            type="date" 
-            name="entryDate" 
-            value={formData.entryDate} 
-            onChange={handleChange} 
+          <input
+            type="date"
+            name="entryDate"
+            value={formData.entryDate}
+            onChange={handleChange}
             className="form-control"
             required
           />
         </div>
         <div className="mb-3">
           <label>Time</label>
-          <input 
-            type="time" 
-            name="entryTime" 
-            value={formData.entryTime} 
-            onChange={handleChange} 
+          <input
+            type="time"
+            name="entryTime"
+            value={formData.entryTime}
+            onChange={handleChange}
             className="form-control"
             required
           />
         </div>
         <div className="mb-3">
           <label>Weight (lbs)</label>
-          <input 
-            type="number" 
-            name="weight" 
-            value={formData.weight} 
-            onChange={handleChange} 
+          <input
+            type="number"
+            name="weight"
+            value={formData.weight}
+            onChange={handleChange}
             className="form-control"
             min="0.1"
             step="0.1"
@@ -69,18 +75,22 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
         </div>
         <div className="mb-3">
           <label>Ketone Level</label>
-          <input 
-            type="number" 
-            name="ketoneLevel" 
-            value={formData.ketoneLevel} 
-            onChange={handleChange} 
+          <input
+            type="number"
+            name="ketoneLevel"
+            value={formData.ketoneLevel}
+            onChange={handleChange}
             className="form-control"
             min="0.0"
             max="99.0"
             step="0.1"
           />
         </div>
-        <button type="button" onClick={handleSave} className="btn btn-success me-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="btn btn-success me-2"
+        >
           Save
         </button>
         <button type="button" onClick={handleDelete} className="btn btn-danger">
