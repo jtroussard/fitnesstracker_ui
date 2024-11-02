@@ -1,15 +1,13 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';  // Correctly use useNavigate
-import { AuthContext } from '../../context/AuthContext';  // Import AuthContext
-import { toast } from 'react-toastify';
+// src/components/auth/Login.js
 
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [memberName, setMemberName] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);  // Handle errors
-  const { handleLogin } = useContext(AuthContext);  // Use AuthContext
-  const navigate = useNavigate();  // For redirection
+  const { handleLogin } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
     console.log(`From Login.js :: handleSubmit called with ${event.type}`);
@@ -20,19 +18,11 @@ const Login = () => {
       return;
     }
 
-    await handleLogin({ memberName, password });
-    const userRoles = JSON.parse(localStorage.getItem('roles')) || [];
-    if (userRoles.includes('ROLE_ADMIN')) {
-      navigate('/boards/admin');
-    } else if (userRoles.includes('ROLE_MEMBER')) {
-      navigate('/boards/members');
-    } else {
-      navigate('/auth/login');
+    const result = await handleLogin({ memberName, password });
+    if (!result.success) {
+      console.log('From Login.js :: Login failed');
     }
-
-    console.log('From Login.js :: handleSubmit finished');
   };
-
 
   return (
     <div className="container mt-5">
@@ -43,7 +33,6 @@ const Login = () => {
               <h2>Login</h2>
             </div>
             <div className="card-body">
-              {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="login-memberName" className="form-label">Username</label>
