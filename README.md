@@ -5,8 +5,6 @@
 fitnesstracker_ui
 ├── .gitignore
 ├── README.md
-├── diff
-├── log
 ├── package-lock.json
 ├── package.json
 ├── public
@@ -25,51 +23,53 @@ fitnesstracker_ui
     ├── assets
     │   └── logo.png
     ├── components
+    │   ├── auth
+    │   │   ├── Login.js
+    │   │   └── Register.js
     │   ├── common
     │   │   ├── ErrorBoundary.js
+    │   │   ├── LogoutButton.js
     │   │   ├── MainButton.js
     │   │   └── Navbar.js
-    │   └── dashboard
-    │       ├── Dashboard.css
-    │       ├── admin
-    │       │   ├── AdminDashboard.js
-    │       │   └── views
-    │       │       └── AdminOverview.js
-    │       ├── common
-    │       │   ├── MainContent.js
-    │       │   ├── SideNav.js
-    │       │   ├── SideNavItem.js
-    │       │   └── tile
-    │       │       ├── LargeTile.js
-    │       │       ├── MediumTile.js
-    │       │       └── SmallTile.js
-    │       └── member
-    │           ├── MemberDashboard.js
-    │           ├── content
-    │           │   ├── FitnessEntryDetails.js
-    │           │   ├── FitnessEntryItem.js
-    │           │   └── FitnessEntryList.js
-    │           └── views
-    │               ├── MemberOverview.js
-    │               ├── MemberProfile.js
-    │               └── MemberSettings.js
+    │   ├── dashboard
+    │   │   ├── Dashboard.css
+    │   │   ├── admin
+    │   │   │   ├── AdminDashboard.js
+    │   │   │   └── views
+    │   │   │       └── AdminOverview.js
+    │   │   ├── common
+    │   │   │   ├── MainContent.js
+    │   │   │   ├── SideNav.js
+    │   │   │   ├── SideNavItem.js
+    │   │   │   └── tile
+    │   │   │       ├── LargeTile.js
+    │   │   │       ├── MediumTile.js
+    │   │   │       ├── SmallTile.js
+    │   │   │       └── tiles.css
+    │   │   └── member
+    │   │       ├── MemberDashboard.js
+    │   │       ├── content
+    │   │       │   ├── FitnessEntryDetails.js
+    │   │       │   ├── FitnessEntryItem.js
+    │   │       │   ├── FitnessEntryList.js
+    │   │       │   └── fitness-entry.css
+    │   │       └── views
+    │   │           ├── MemberOverview.js
+    │   │           ├── MemberProfile.js
+    │   │           └── MemberSettings.js
+    │   └── home
+    │       └── LandingPage.js
     ├── context
     │   └── AuthContext.js
     ├── index.css
     ├── index.js
     ├── logo.svg
-    ├── pages
-    │   ├── auth
-    │   │   ├── Login.js
-    │   │   ├── Logout.js
-    │   │   └── Register.js
-    │   └── landing
-    │       └── LandingPage.js
     ├── reportWebVitals.js
     ├── routes
     │   ├── AuthRoutes.js
     │   └── DashboardRoutes.js
     ├── services
+    │   └── fitnessEntryService.js
     └── setupTests.js
 ```
 
@@ -86,6 +86,31 @@ fitnesstracker_ui
 10. **TrendTile**: Specialized version of `GenericTile` for trend-based data.
 11. **GraphTile**: Extends `GenericTile` to include charts.
 12. **FitnessTable**: Displays entries in a tabular format.
+
+## Role-Based Paths
+
+In the Fitness Quest Tracker application, users are directed to specific dashboard routes based on their assigned roles. The application utilizes role-based access control to provide relevant dashboard views for each user type.
+
+### Paths by Role
+
+- **Admin Role (`ROLE_ADMIN`)**
+  - **Path**: `/boards/admins`
+  - **Description**: Grants access to the Admin Dashboard, where administrators can manage user data, view system metrics, and oversee overall application performance.
+
+- **Member Role (`ROLE_MEMBER`)**
+  - **Path**: `/boards/members`
+  - **Description**: Provides access to the Member Dashboard, where members can track fitness activities, log nutrition details, and monitor personal progress.
+
+- **Unauthorized or Unassigned Roles**
+  - **Redirect Path**: `/auth/login`
+  - **Description**: Users without a valid or recognized role are redirected to the login page to re-authenticate or contact support if access issues persist.
+
+### Path Configuration
+Paths are defined within the `DashboardRoutes.js` component in the `src/routes` directory. Role-based redirection is managed in the `AuthContext.js` file to ensure users are directed to the appropriate dashboard based on their assigned roles.
+
+### Future Considerations
+- **Additional Roles**: As the application expands, new roles and associated paths may be added to support different types of users and functionalities.
+- **Enhanced Error Handling**: In cases where role data is missing or corrupted, the application may provide users with clearer error messages or contact options for support.
 
 ---
 

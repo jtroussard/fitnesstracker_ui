@@ -14,7 +14,7 @@ const DashboardRoutes = ({onLogout}) => {
     return (
         <Routes>
             <Route
-                path="/admin/*"
+                path="/admins/*"
                 element={userRoles.includes('ROLE_ADMIN') ? (
                     <AdminDashboard onLogout={onLogout}/>
                 ) : (
@@ -24,7 +24,7 @@ const DashboardRoutes = ({onLogout}) => {
             />
 
             <Route
-                path="/member/*"
+                path="/members/*"
                 element={userRoles.includes('ROLE_MEMBER') ? (
                     <MemberDashboard onLogout={onLogout}/>
                 ) : (

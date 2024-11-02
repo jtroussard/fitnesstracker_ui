@@ -1,5 +1,4 @@
 import React from 'react';
-import Navbar from '../../components/common/Navbar'; // Keep the Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is included
 
 const LandingPage = () => {
