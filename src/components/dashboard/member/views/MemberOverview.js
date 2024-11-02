@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid'; // Importing uuid for unique temporary IDs
 import LargeTile from "../../common/tile/LargeTile";
 import FitnessEntryList from "../content/FitnessEntryList";
 import FitnessEntryDetails from "../content/FitnessEntryDetails";
 import { getEntries, saveEntry, updateEntry } from "../../../../services/fitnessEntryService";
+import { toast } from "react-toastify";
 
 const MemberOverview = () => {
   const [entries, setEntries] = useState([]);
@@ -12,94 +14,101 @@ const MemberOverview = () => {
     console.log("MemberOverview :: useEffect (fetching entries)");
     const fetchEntries = async () => {
       try {
-        const fetchedEntries = await getEntries();
+        const response = await getEntries();
+        const fetchedEntries = response.data
         setEntries(fetchedEntries);
-        console.log(
-          "MemberOverview :: useEffect (entries fetched successfully)",
-          fetchedEntries
-        );
+        console.log("MemberOverview :: useEffect (entries fetched successfully)", fetchedEntries);
       } catch (error) {
-        console.error(
-          "MemberOverview :: useEffect (error fetching entries)",
-          error
-        );
+        console.error("MemberOverview :: useEffect (error fetching entries)", error);
         throw error;
       }
     };
-
     fetchEntries();
   }, []);
 
   const handleSelectEntry = (id) => {
+    console.log(`MemberOverview :: handleSelectEntry (selected entry id = ${id})`);
     setSelectedEntryId(id);
   };
 
   const handleOnClose = () => {
+    console.log("MemberOverview :: handleOnClose (closing entry inspector)");
     setSelectedEntryId(null);
-  }
+  };
 
   const handleAddEntry = () => {
     const newEntry = {
-      id: null,
+      id: uuidv4(), // Use a temporary UUID for the new entry
       entryDate: "",
       entryTime: "",
       weight: "",
       ketoneLevel: "",
+      isNew: true, // Mark this entry as new
     };
+    console.log("MemberOverview :: handleAddEntry (adding new entry with temp ID)", newEntry);
     setEntries([newEntry, ...entries]);
-    setSelectedEntryId(newEntry.id);
+    setSelectedEntryId(newEntry.id); // Set this temporary ID as the selected entry
   };
 
   const handleSaveEntry = (id, updatedEntry) => {
+    console.log(`MemberOverview :: handleSaveEntry (called with id=${id}, updatedEntry=${JSON.stringify(updatedEntry)})`);
     const saveOrUpdateEntry = async () => {
       try {
         let response;
-        
-        if (id) {
-          // If the entry has an ID, it's an update (PUT)
+
+        if (id && !updatedEntry.isNew) {
+          // Update existing entry (PUT)
           console.log(`MemberOverview :: handleSaveEntry (updating entry with id = ${id})`);
           response = await updateEntry(id, updatedEntry);
-          console.log(`MemberOverview :: handleSaveEntry (success updating entry with id = ${id})`);
+          console.log(`MemberOverview :: handleSaveEntry (success updating entry with id = ${id})`, response);
         } else {
-          // If there's no ID, it's a new entry (POST)
+          // Save new entry (POST)
           console.log("MemberOverview :: handleSaveEntry (adding new entry)");
-          response = await saveEntry(updatedEntry);
+          response = await saveEntry({...updatedEntry, id: null});
           console.log("MemberOverview :: handleSaveEntry (success adding new entry)", response);
         }
-  
+
         // Update the entries state with the response
         setEntries((prevEntries) => {
-          if (id) {
-            // Update the existing entry
-            return prevEntries.map((entry) =>
-              entry.id === id ? { ...entry, ...response } : entry
+          // Extract the entry entity from the response
+          const entryDatabaseId = response.data
+          if (updatedEntry.isNew) {
+            // Update the entry details with the response from the backend.
+            const newList = prevEntries.map((entry) =>
+              // This should replace the entry with the backend response including a new shiny id (backend specific)
+              // Getting rid of the temp UUID
+              entry.id === id ? { ...updatedEntry, isNew: false, id: entryDatabaseId } : entry
             );
+            return newList;
           } else {
-            // Add the new entry to the list
-            return [response, ...prevEntries];
+            // Update the existing entry
+            const newList = prevEntries.map((entry) =>
+              entry.id === id ? { ...updatedEntry } : entry
+            );
+            return newList;
           }
         });
-  
+        console.log("MemberOverview :: handleSaveEntry (updated entries)", entries);
       } catch (error) {
         console.error("MemberOverview :: handleSaveEntry (error saving or updating entry)", error);
+        toast.error("Failed to save entry. Please try again.");
       } finally {
         setSelectedEntryId(null);
       }
     };
-  
-    // Call the function to perform the save or update operation
     saveOrUpdateEntry();
   };
-  
 
   const handleDeleteEntry = (id) => {
+    console.log(`MemberOverview :: handleDeleteEntry (deleting entry with id = ${id})`);
     setEntries(entries.filter((entry) => entry.id !== id));
     setSelectedEntryId(null);
   };
 
   const selectedEntry = entries.find((entry) => entry.id === selectedEntryId);
 
-  console.log(`TUNA ENTRIES ${JSON.stringify(entries)}`);
+  console.log("MemberOverview :: current entries", entries);
+  console.log("MemberOverview :: selected entry", selectedEntry);
 
   return (
     <div>

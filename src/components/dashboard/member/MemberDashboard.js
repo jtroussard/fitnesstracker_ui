@@ -4,9 +4,9 @@ import MainContent from '../common/MainContent';
 
 const MemberDashboard = ({ onLogout, user }) => {
   const navItems = [
-    { label: 'Overview', path: '/boards/member/overview', icon: 'dashboard' },
-    { label: 'Profile', path: '/boards/member/profile', icon: 'person' },
-    { label: 'Settings', path: '/boards/member/settings', icon: 'settings' },
+    { label: 'Overview', path: '/boards/members/overview', icon: 'dashboard' },
+    { label: 'Profile', path: '/boards/members/profile', icon: 'person' },
+    { label: 'Settings', path: '/boards/members/settings', icon: 'settings' },
   ];
 
   return (

@@ -47,14 +47,24 @@ export const saveEntry = async (entryData) => {
       throw new Error("Failed to add entry");
     }
 
-    const result = await response.json();
-    console.log("fitnessService.js :: saveEntry (success)", result);
-    return result;
+    // Attempt to process the response
+    try {
+      const result = await response.json();
+      console.log("fitnessService.js :: saveEntry (success)", result);
+      return result;
+    } catch (processingError) {
+      console.warn(
+        "fitnessService.js :: saveEntry (data saved successfully, but encountered an issue processing the response)",
+        processingError
+      );
+      return { message: "Entry added, but an error occurred while processing the response." };
+    }
   } catch (error) {
     console.error("fitnessService.js :: saveEntry (error)", error);
     throw error;
   }
 };
+
 
 export const updateEntry = async (id, entryData) => {
   try {

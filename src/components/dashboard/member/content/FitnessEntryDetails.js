@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 
 const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
+  const getCurrentDate = () => new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  const getCurrentTime = () => new Date().toTimeString().slice(0, 5); // 'HH:mm'
+
   const [formData, setFormData] = useState({
-    entryDate: entry.entryDate || "",
-    entryTime: entry.entryTime || "",
+    entryDate: entry.entryDate || getCurrentDate(),
+    entryTime: entry.entryTime || getCurrentTime(),
     weight: entry.weight || "",
     ketoneLevel: entry.ketoneLevel || "",
   });
@@ -21,10 +24,12 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
       entryTime.length > 5 ? entryTime.substring(0, 5) : entryTime;
 
     const updatedEntry = {
+      id: entry.id,
       entryDate,
       entryTime: formattedTime, // Now only 'HH:mm'
       weight: parseFloat(weight),
       ketoneLevel: parseFloat(ketoneLevel),
+      isNew: entry.isNew || false,
     };
 
     onSave(entry.id, updatedEntry);

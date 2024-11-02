@@ -1,5 +1,8 @@
 # Fitness Quest Tracker
 
+## Pin
+Start working on the entry selector (i know there are some bugs there), the close button, the delete, and add a cancel button for entries. Update backend for hard and soft deletes.
+
 ## Project Structure
 ```text
 fitnesstracker_ui
