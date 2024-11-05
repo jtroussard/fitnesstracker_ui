@@ -11,6 +11,11 @@ const MemberOverview = () => {
   const [selectedEntryId, setSelectedEntryId] = useState(null);
 
   useEffect(() => {
+    console.log("Updated entries:", entries);
+  }, [entries]);
+  
+
+  useEffect(() => {
     console.log("MemberOverview :: useEffect (fetching entries)");
     const fetchEntries = async () => {
       try {
@@ -31,10 +36,16 @@ const MemberOverview = () => {
     setSelectedEntryId(id);
   };
 
-  const handleOnClose = () => {
+  const handleOnClose = (id) => {
     console.log("MemberOverview :: handleOnClose (closing entry inspector)");
     setSelectedEntryId(null);
-  };
+    if (id) {
+      setEntries((prevEntries) => {
+        const filterEntries = prevEntries.filter(entry => entry.id !== id);
+        return filterEntries;
+      });
+    }
+  };  
 
   const handleAddEntry = () => {
     const newEntry = {
@@ -125,11 +136,12 @@ const MemberOverview = () => {
         </div>
         {selectedEntry && (
           <div className="col-12 mt-3">
-            <LargeTile title="Fitness Entry Inspector" onClose={handleOnClose}>
+            <LargeTile title="Fitness Entry Inspector" onClose={() => handleOnClose(selectedEntryId)}>
               <FitnessEntryDetails
                 entry={selectedEntry}
                 onSave={handleSaveEntry}
                 onDelete={handleDeleteEntry}
+                onClose={() => handleOnClose(selectedEntryId)}
               />
             </LargeTile>
           </div>
