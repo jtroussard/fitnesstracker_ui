@@ -49,7 +49,11 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Logout failed');
+        // TODO Keeping this code here for now because the error loops during development which is annoying.
+        // Research what is a good workflow for logging out.
+        // throw new Error('Logout failed');
+        console.warn('AuthContext :: Token may have expired or the user is not authorized to access this endpoint.');
+        clearAndRedirect();
       } else if (response.status === 403) {
         console.warn('AuthContext :: Token may have expired or the user is not authorized to access this endpoint.');
         toast.warn('Session expired. Please log in again.');

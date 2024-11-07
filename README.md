@@ -1,7 +1,9 @@
 # Fitness Quest Tracker
 
 ## Pin
-Start working on the entry selector (i know there are some bugs there), the close button, the delete, and add a cancel button for entries. Update backend for hard and soft deletes.
+Selector looks ok, now working on delete
+
+//Start working on the entry selector (i know there are some bugs there), the close button, the delete, and add a cancel button for entries. Update backend for hard and soft deletes.
 
 ## Project Structure
 ```text

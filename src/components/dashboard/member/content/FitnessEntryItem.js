@@ -7,10 +7,16 @@ const FitnessEntryItem = ({ entry, onSelect }) => {
     return null;
   }
 
+  const handleOnClick = () => {
+    console.log("Selecting entry with id:", entry.entryId);
+    onSelect(entry.entryId); // Pass entry.id to onSelect
+  }
+
   return (
     <li
       className="list-group-item d-flex justify-content-between align-items-center"
-      onClick={onSelect}
+      onClick={handleOnClick} // Simplify onClick handler
+      key={entry.id}
     >
       <div>
         <strong>{entry.entryDate}</strong> at {entry.entryTime} - {entry.weight}{" "}

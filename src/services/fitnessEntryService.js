@@ -20,7 +20,7 @@ export const getEntries = async () => {
     }
 
     const result = await response.json();
-    console.log("fitnessService.js :: getEntries (success)", result);
+    console.log("fitnessService.js :: getEntries (success, data structure check)", JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
     console.log("fitnessService.js :: getEntries (error)", error);

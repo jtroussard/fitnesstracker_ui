@@ -39,8 +39,9 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete, onClose }) => {
     onSave(entry.id, updatedEntry);
   };
 
-  const handleDelete = () => {
-    onDelete(entry.id);
+  const handleDelete = (id) => {
+    console.log(`handle delete fitness entry details ${JSON.stringify(id)} `)
+    onDelete(id);
   };
 
   return (
@@ -107,7 +108,7 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete, onClose }) => {
             { !entry.isNew && (
               <button
               type="button"
-              onClick={handleDelete}
+              onClick={() => handleDelete(entry.id)}
               className="btn btn-danger"
             >
               Delete
