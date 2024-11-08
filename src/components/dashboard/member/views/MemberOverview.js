@@ -145,12 +145,13 @@ const MemberOverview = () => {
           "MemberOverview :: handleSaveEntry (updated entries)",
           entries
         );
+        toast.success("Entry successfully saved.")
       } catch (error) {
         console.error(
           "MemberOverview :: handleSaveEntry (error saving or updating entry)",
           error
         );
-        toast.error("Failed to save entry. Please try again.");
+        toast.error("Entry save failed. Please try again.");
       } finally {
         setSelectedEntryId(null);
       }
@@ -166,10 +167,10 @@ const MemberOverview = () => {
       await deleteEntry(selectedEntryId);
       setEntries(entries.filter((entry) => entry.entryId !== id));
       setSelectedEntryId(null);
-      toast.success("Entry has been successfully deleted.");
+      toast.success("Entry successfully deleted.");
     } catch (error) {
       console.error(`MemberOverview :: handleDeleteEntry called with ${id} - ${selectedEntryId}`)
-      toast.error("Failed to delete entry. Please try again.");
+      toast.error("Entry delete failed. Please try again.");
     }
   };
 
