@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid"; // Importing uuid for unique temporary IDs
+import React, { useEffect, useState, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 import LargeTile from "../../common/tile/LargeTile";
 import FitnessEntryList from "../content/FitnessEntryList";
 import FitnessEntryDetails from "../content/FitnessEntryDetails";
@@ -15,9 +15,13 @@ const MemberOverview = () => {
   const [entries, setEntries] = useState([]);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
 
-  const selectedEntry = entries.find(
-    (entry) => entry.entryId === selectedEntryId
-  );
+  // const selectedEntry = entries.find(
+  //   (entry) => entry.entryId === selectedEntryId
+  // );
+
+  const selectedEntry = useMemo(() => {
+    return entries.find((entry) => entry.entryId === selectedEntryId);
+  }, [entries, selectedEntryId]);
 
   console.log("MemberOverview :: current entries", entries);
   console.log("MemberOverview :: selected entry", selectedEntry);
@@ -26,6 +30,9 @@ const MemberOverview = () => {
     console.log("MemberOverview :: fetched entries:", entries);
   }, [entries]);
 
+  // TODO Looks like this hook is run when the selected entry is updated. 
+  // Make sure this hook only runs when the component is first rendered and
+  // when the entries state is updated.
   useEffect(() => {
     console.log("MemberOverview :: useEffect (fetching entries)");
     const fetchEntries = async () => {
@@ -55,26 +62,31 @@ const MemberOverview = () => {
     setSelectedEntryId(id);
   };
 
-  const handleOnClose = (id) => {
-    console.log("MemberOverview :: handleOnClose (closing entry inspector)");
+  const handleOnClose = () => {
+    console.log("Entries before handleOnClose:", entries);
+    if (selectedEntry && selectedEntry.isNew) {
+      setEntries((prevEntries) => 
+        prevEntries ? prevEntries.filter((entry) => entry.entryId !== selectedEntryId) : []
+      );
+    }
     setSelectedEntryId(null);
-  };
+  };  
 
   const handleAddEntry = () => {
     const newEntry = {
-      id: uuidv4(), // Use a temporary UUID for the new entry
+      entryId: uuidv4(), // Use a temporary UUID for the new entry
       entryDate: "",
       entryTime: "",
       weight: "",
       ketoneLevel: "",
-      isNew: true, // Mark this entry as new
+      isNew: true,
     };
     console.log(
       "MemberOverview :: handleAddEntry (adding new entry with temp ID)",
       newEntry
     );
     setEntries([newEntry, ...entries]);
-    setSelectedEntryId(newEntry.id); // Set this temporary ID as the selected entry
+    setSelectedEntryId(newEntry.entryId); // Set this temporary ID as the selected entry
   };
 
   const handleSaveEntry = (id, updatedEntry) => {
@@ -146,16 +158,18 @@ const MemberOverview = () => {
     saveOrUpdateEntry();
   };
 
-  const handleDeleteEntry = (id) => {
+  const handleDeleteEntry = async (id) => {
     console.log(
       `MemberOverview :: handleDeleteEntry (deleting entry with id = ${id})`
     );
     try {
-      deleteEntry(selectedEntryId);
+      await deleteEntry(selectedEntryId);
       setEntries(entries.filter((entry) => entry.entryId !== id));
       setSelectedEntryId(null);
+      toast.success("Entry has been successfully deleted.");
     } catch (error) {
       console.error(`MemberOverview :: handleDeleteEntry called with ${id} - ${selectedEntryId}`)
+      toast.error("Failed to delete entry. Please try again.");
     }
   };
 
@@ -176,7 +190,7 @@ const MemberOverview = () => {
           <div className="col-12 mt-3">
             <LargeTile
               title="Fitness Entry Inspector"
-              onClose={() => handleOnClose(selectedEntry.entryId)}
+              onClose={() => handleOnClose(selectedEntryId)}
             >
               <FitnessEntryDetails
                 key={selectedEntryId}
