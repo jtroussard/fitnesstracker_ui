@@ -8,8 +8,8 @@ const FitnessEntryItem = ({ entry, onSelect }) => {
   }
 
   const handleOnClick = () => {
-    console.log("Selecting entry with id:", entry.entryId);
-    onSelect(entry.entryId); // Pass entry.id to onSelect
+    console.log(`Selecting entry with id: ${entry.id} and entry is ${JSON.stringify(entry)}`);
+    onSelect(entry.id); // Pass entry.id to onSelect
   }
 
   return (

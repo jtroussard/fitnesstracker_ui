@@ -10,9 +10,9 @@ const FitnessEntryList = ({ entries, onSelectEntry, onAddEntry }) => {
       <ul className="list-group">
         {entries.map((entry) => (
           <FitnessEntryItem
-            key={entry.entryId}
+            key={entry.id}
             entry={entry}
-            onSelect={() => onSelectEntry(entry.entryId)}
+            onSelect={() => onSelectEntry(entry.id)}
           />
         ))}
       </ul>

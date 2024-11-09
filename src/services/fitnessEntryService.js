@@ -68,7 +68,7 @@ export const saveEntry = async (entryData) => {
 
 export const updateEntry = async (id, entryData) => {
   try {
-    console.log(`fitnessService.js :: updateEntry (called with id = ${id})`, entryData);
+    console.log(`fitnessService.js :: updateEntry (called with id = ${id} and entryData = ${entryData})`, entryData);
     const token = getJwtToken();
 
     const response = await fetch(`${API_BASE_URL}/${id}`, {
