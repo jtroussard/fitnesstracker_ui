@@ -1,105 +1,126 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 import LargeTile from "../../common/tile/LargeTile";
 import FitnessEntryList from "../content/FitnessEntryList";
 import FitnessEntryDetails from "../content/FitnessEntryDetails";
-import { getEntries, saveEntry, updateEntry } from "../../../../services/fitnessEntryService";
+import {
+  getEntries,
+  saveEntry,
+  updateEntry,
+  deleteEntry,
+} from "../../../../services/fitnessEntryService";
+import { toast } from "react-toastify";
 
 const MemberOverview = () => {
   const [entries, setEntries] = useState([]);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
 
+  const selectedEntry = useMemo(() => {
+    if (selectedEntryId) {
+      console.log(
+        "**useMemo:** Finding selected entry with ID:",
+        selectedEntryId
+      );
+      return (
+        entries.find((entry) => entry.id === selectedEntryId) || {
+          id: selectedEntryId,
+          entryDate: "",
+          entryTime: "",
+          weight: "",
+          ketoneLevel: "",
+          isNew: true,
+        }
+      );
+    }
+    return null;
+  }, [entries, selectedEntryId]);
+
   useEffect(() => {
-    console.log("MemberOverview :: useEffect (fetching entries)");
     const fetchEntries = async () => {
       try {
-        const fetchedEntries = await getEntries();
-        setEntries(fetchedEntries);
-        console.log(
-          "MemberOverview :: useEffect (entries fetched successfully)",
-          fetchedEntries
-        );
+        const response = await getEntries();
+        setEntries(response.data);
+        console.log("**useEffect:** Entries fetched and set to state:", entries);
       } catch (error) {
-        console.error(
-          "MemberOverview :: useEffect (error fetching entries)",
-          error
-        );
-        throw error;
+        console.error("Error fetching entries", error);
       }
     };
-
     fetchEntries();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSelectEntry = (id) => {
-    setSelectedEntryId(id);
+  const handleSelectEntry = (stateId) => {
+    setSelectedEntryId(stateId);
+    console.log("**handleSelectEntry:** Selected entry ID:", stateId);
   };
 
   const handleOnClose = () => {
+    if (selectedEntry?.isNew) {
+      setEntries((prevEntries) =>
+        prevEntries.filter((entry) => entry.id !== selectedEntryId)
+      );
+    }
     setSelectedEntryId(null);
-  }
+    console.log("**handleOnClose:** Selected entry closed, isNew:", selectedEntry?.isNew);
+  };
 
   const handleAddEntry = () => {
-    const newEntry = {
-      id: null,
-      entryDate: "",
-      entryTime: "",
-      weight: "",
-      ketoneLevel: "",
-    };
-    setEntries([newEntry, ...entries]);
-    setSelectedEntryId(newEntry.id);
+    const tempStateId = uuidv4(); // Temporary ID for new entry
+    setSelectedEntryId(tempStateId);
+    console.log("**handleAddEntry:** Adding new entry, temporary ID:", tempStateId);
   };
 
-  const handleSaveEntry = (id, updatedEntry) => {
-    const saveOrUpdateEntry = async () => {
-      try {
-        let response;
-        
-        if (id) {
-          // If the entry has an ID, it's an update (PUT)
-          console.log(`MemberOverview :: handleSaveEntry (updating entry with id = ${id})`);
-          response = await updateEntry(id, updatedEntry);
-          console.log(`MemberOverview :: handleSaveEntry (success updating entry with id = ${id})`);
-        } else {
-          // If there's no ID, it's a new entry (POST)
-          console.log("MemberOverview :: handleSaveEntry (adding new entry)");
-          response = await saveEntry(updatedEntry);
-          console.log("MemberOverview :: handleSaveEntry (success adding new entry)", response);
-        }
+  const handleCreateEntry = async (newEntryData) => {
+    try {
+      const response = await saveEntry({ ...newEntryData, id: null });
+      const entryDatabaseId = response.data;
   
-        // Update the entries state with the response
-        setEntries((prevEntries) => {
-          if (id) {
-            // Update the existing entry
-            return prevEntries.map((entry) =>
-              entry.id === id ? { ...entry, ...response } : entry
-            );
-          } else {
-            // Add the new entry to the list
-            return [response, ...prevEntries];
-          }
-        });
+      setEntries((prevEntries) => [
+        { ...newEntryData, id: entryDatabaseId, isNew: false },
+        ...prevEntries,
+      ]);
   
-      } catch (error) {
-        console.error("MemberOverview :: handleSaveEntry (error saving or updating entry)", error);
-      } finally {
-        setSelectedEntryId(null);
-      }
-    };
+      toast.success("New entry created successfully.");
+    } catch (error) {
+      console.error("Error creating new entry", error);
+      toast.error("Failed to create entry.");
+    } finally {
+      setSelectedEntryId(null);
+    }
+  };
   
-    // Call the function to perform the save or update operation
-    saveOrUpdateEntry();
+  const handleUpdateEntry = async (existingEntryId, updatedEntryData) => {
+    try {
+      await updateEntry(existingEntryId, updatedEntryData);
+  
+      setEntries((prevEntries) =>
+        prevEntries.map((entry) =>
+          entry.id === existingEntryId ? { ...updatedEntryData } : entry
+        )
+      );
+  
+      toast.success("Entry updated successfully.");
+    } catch (error) {
+      console.error("Error updating entry", error);
+      toast.error("Failed to update entry.");
+    } finally {
+      setSelectedEntryId(null);
+    }
   };
   
 
-  const handleDeleteEntry = (id) => {
-    setEntries(entries.filter((entry) => entry.id !== id));
-    setSelectedEntryId(null);
+  const handleDeleteEntry = async (stateId) => {
+    try {
+      await deleteEntry(stateId);
+      setEntries((prevEntries) =>
+        prevEntries.filter((entry) => entry.id !== stateId)
+      );
+      setSelectedEntryId(null);
+      toast.success("Entry successfully deleted.");
+    } catch (error) {
+      toast.error("Entry delete failed. Please try again.");
+    }
   };
-
-  const selectedEntry = entries.find((entry) => entry.id === selectedEntryId);
-
-  console.log(`TUNA ENTRIES ${JSON.stringify(entries)}`);
 
   return (
     <div>
@@ -114,13 +135,19 @@ const MemberOverview = () => {
             />
           </LargeTile>
         </div>
-        {selectedEntry && (
+        {selectedEntryId && (
           <div className="col-12 mt-3">
-            <LargeTile title="Fitness Entry Inspector" onClose={handleOnClose}>
+            <LargeTile
+              title="Fitness Entry Inspector"
+              onClose={handleOnClose}
+            >
               <FitnessEntryDetails
+                key={selectedEntryId}
                 entry={selectedEntry}
-                onSave={handleSaveEntry}
-                onDelete={handleDeleteEntry}
+                onSave={handleCreateEntry}
+                onUpdate={handleUpdateEntry}
+                onDelete={() => handleDeleteEntry(selectedEntryId)}
+                onClose={handleOnClose}
               />
             </LargeTile>
           </div>

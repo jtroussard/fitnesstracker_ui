@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 
-const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
+const FitnessEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => {
+  const getCurrentDate = () => new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  const getCurrentTime = () => new Date().toTimeString().slice(0, 8); // 'HH:mm'
+
   const [formData, setFormData] = useState({
-    entryDate: entry.entryDate || "",
-    entryTime: entry.entryTime || "",
+    entryDate: entry.entryDate || getCurrentDate(),
+    entryTime: entry.entryTime || getCurrentTime(),
     weight: entry.weight || "",
     ketoneLevel: entry.ketoneLevel || "",
   });
+
+  const handleCancel = (id) => {
+    onClose(id);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,22 +23,31 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
   const handleSave = () => {
     const { entryDate, entryTime, weight, ketoneLevel } = formData;
 
-    // Ensure the time is in 'HH:mm' format by trimming to hours and minutes.
-    const formattedTime =
-      entryTime.length > 5 ? entryTime.substring(0, 5) : entryTime;
+    // // Ensure the time is in 'HH:mm' format by trimming to hours and minutes.
+    // const formattedTime =
+    //   entryTime.length > 5 ? entryTime.substring(0, 5) : entryTime;
 
     const updatedEntry = {
-      entryDate,
-      entryTime: formattedTime, // Now only 'HH:mm'
+      id: entry.id,
+      entryDate: entryDate,
+      entryTime: entryTime,
       weight: parseFloat(weight),
       ketoneLevel: parseFloat(ketoneLevel),
+      isNew: entry.isNew || false,
     };
 
-    onSave(entry.id, updatedEntry);
+    console.log(`Sending entry to view for saving: ${JSON.stringify(updatedEntry)}`)
+
+    if (entry.isNew) {
+      onSave(updatedEntry);
+    } else {
+      onUpdate(entry.id, updatedEntry);
+    }
   };
 
-  const handleDelete = () => {
-    onDelete(entry.id);
+  const handleDelete = (id) => {
+    console.log(`handle delete fitness entry details ${JSON.stringify(id)} `)
+    onDelete(id);
   };
 
   return (
@@ -86,16 +102,33 @@ const FitnessEntryDetails = ({ entry, onSave, onDelete }) => {
             step="0.1"
           />
         </div>
-        <button
-          type="button"
-          onClick={handleSave}
-          className="btn btn-success me-2"
-        >
-          Save
-        </button>
-        <button type="button" onClick={handleDelete} className="btn btn-danger">
-          Delete
-        </button>
+        <div className="d-flex justify-content-between">
+          <div>
+            <button
+              type="button"
+              onClick={handleSave}
+              className="btn btn-success me-2"
+            >
+              Save
+            </button>
+            { !entry.isNew && (
+              <button
+              type="button"
+              onClick={() => handleDelete(entry.id)}
+              className="btn btn-danger"
+            >
+              Delete
+            </button>
+            ) }
+          </div>
+          <button
+            type="button"
+            onClick={() => handleCancel(entry.id)}
+            className="btn btn-secondary"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

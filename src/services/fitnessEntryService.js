@@ -20,7 +20,7 @@ export const getEntries = async () => {
     }
 
     const result = await response.json();
-    console.log("fitnessService.js :: getEntries (success)", result);
+    console.log("fitnessService.js :: getEntries (success, data structure check)", JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
     console.log("fitnessService.js :: getEntries (error)", error);
@@ -47,18 +47,28 @@ export const saveEntry = async (entryData) => {
       throw new Error("Failed to add entry");
     }
 
-    const result = await response.json();
-    console.log("fitnessService.js :: saveEntry (success)", result);
-    return result;
+    // Attempt to process the response
+    try {
+      const result = await response.json();
+      console.log("fitnessService.js :: saveEntry (success)", result);
+      return result;
+    } catch (processingError) {
+      console.warn(
+        "fitnessService.js :: saveEntry (data saved successfully, but encountered an issue processing the response)",
+        processingError
+      );
+      return { message: "Entry added, but an error occurred while processing the response." };
+    }
   } catch (error) {
     console.error("fitnessService.js :: saveEntry (error)", error);
     throw error;
   }
 };
 
+
 export const updateEntry = async (id, entryData) => {
   try {
-    console.log(`fitnessService.js :: updateEntry (called with id = ${id})`, entryData);
+    console.log(`fitnessService.js :: updateEntry (called with id = ${id} and entryData = ${entryData})`, entryData);
     const token = getJwtToken();
 
     const response = await fetch(`${API_BASE_URL}/${id}`, {
