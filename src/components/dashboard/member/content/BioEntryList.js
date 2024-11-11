@@ -1,7 +1,7 @@
 import React from "react";
-import FitnessEntryItem from "./FitnessEntryItem";
+import BioEntryItem from "./BioEntryItem";
 
-const FitnessEntryList = ({ entries, onSelectEntry, onAddEntry }) => {
+const BioEntryList = ({ entries, onSelectEntry, onAddEntry }) => {
   return (
     <div>
       <button onClick={onAddEntry} className="btn btn-primary mb-3">
@@ -9,7 +9,7 @@ const FitnessEntryList = ({ entries, onSelectEntry, onAddEntry }) => {
       </button>
       <ul className="list-group">
         {entries.map((entry) => (
-          <FitnessEntryItem
+          <BioEntryItem
             key={entry.id}
             entry={entry}
             onSelect={() => onSelectEntry(entry.id)}
@@ -20,4 +20,4 @@ const FitnessEntryList = ({ entries, onSelectEntry, onAddEntry }) => {
   );
 };
 
-export default FitnessEntryList;
+export default BioEntryList;

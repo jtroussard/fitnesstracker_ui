@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import LargeTile from "../../common/tile/LargeTile";
+import BioEntryList from "../content/BioEntryList";
+import BioEntryDetails from "../content/BioEntryDetails";
 import {
   getEntries,
   saveEntry,
@@ -9,7 +11,7 @@ import {
 } from "../../../../services/BioEntryService";
 import { toast } from "react-toastify";
 
-const MemberOverview = () => {
+const BioEntryView = () => {
   const [entries, setEntries] = useState([]);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
 
@@ -63,7 +65,7 @@ const MemberOverview = () => {
   };
 
   const handleAddEntry = () => {
-    const tempStateId = uuidv4(); // Temporary ID for new entry
+    const tempStateId = uuidv4();
     setSelectedEntryId(tempStateId);
     console.log("**handleAddEntry:** Adding new entry, temporary ID:", tempStateId);
   };
@@ -122,21 +124,37 @@ const MemberOverview = () => {
 
   return (
     <div>
-      <h2>Member Overview</h2>
+      <h2>Body Metrics</h2>
       <div className="row g-3">
         <div className="col-12">
-          <LargeTile title="Main dashboard">
-            <ul>
-            <li>Small tiles summerizing each domains status</li>
-            <li>Small tiles summerizing member related stats (visits, totla entries, etc)</li>
-            <li>Ai suggestion tile</li>
-            <li>Main chart plotting weight, or goals</li>
-            </ul>
+          <LargeTile title="Your Fitness Entries">
+            <BioEntryList
+              entries={entries}
+              onSelectEntry={handleSelectEntry}
+              onAddEntry={handleAddEntry}
+            />
           </LargeTile>
         </div>
+        {selectedEntryId && (
+          <div className="col-12 mt-3">
+            <LargeTile
+              title="Fitness Entry Inspector"
+              onClose={handleOnClose}
+            >
+              <BioEntryDetails
+                key={selectedEntryId}
+                entry={selectedEntry}
+                onSave={handleCreateEntry}
+                onUpdate={handleUpdateEntry}
+                onDelete={() => handleDeleteEntry(selectedEntryId)}
+                onClose={handleOnClose}
+              />
+            </LargeTile>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default MemberOverview;
+export default BioEntryView;

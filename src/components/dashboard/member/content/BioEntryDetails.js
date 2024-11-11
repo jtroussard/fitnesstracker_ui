@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const FitnessEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => {
-  const getCurrentDate = () => new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
-  const getCurrentTime = () => new Date().toTimeString().slice(0, 8); // 'HH:mm'
+const BioEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => {
+  const getCurrentDate = () => new Date().toISOString().slice(0, 10);
+  const getCurrentTime = () => new Date().toTimeString().slice(0, 8);
 
   const [formData, setFormData] = useState({
     entryDate: entry.entryDate || getCurrentDate(),
@@ -23,10 +23,6 @@ const FitnessEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => 
   const handleSave = () => {
     const { entryDate, entryTime, weight, ketoneLevel } = formData;
 
-    // // Ensure the time is in 'HH:mm' format by trimming to hours and minutes.
-    // const formattedTime =
-    //   entryTime.length > 5 ? entryTime.substring(0, 5) : entryTime;
-
     const updatedEntry = {
       id: entry.id,
       entryDate: entryDate,
@@ -36,8 +32,6 @@ const FitnessEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => 
       isNew: entry.isNew || false,
     };
 
-    console.log(`Sending entry to view for saving: ${JSON.stringify(updatedEntry)}`)
-
     if (entry.isNew) {
       onSave(updatedEntry);
     } else {
@@ -46,12 +40,11 @@ const FitnessEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => 
   };
 
   const handleDelete = (id) => {
-    console.log(`handle delete fitness entry details ${JSON.stringify(id)} `)
     onDelete(id);
   };
 
   return (
-    <div className="fitness-entry-details">
+    <div className="bio-entry-details">
       <h3>Edit Entry</h3>
       <form>
         <div className="mb-3">
@@ -134,4 +127,4 @@ const FitnessEntryDetails = ({ entry, onSave, onUpdate, onDelete, onClose }) => 
   );
 };
 
-export default FitnessEntryDetails;
+export default BioEntryDetails;

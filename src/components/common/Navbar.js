@@ -2,8 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import MainButton from './MainButton';
-import logo from '../../assets/logo.png'; // Adjust the path to your logo file
-
+import logo from '../../assets/logo.png';
 const Navbar = () => {
   const { handleLogout, isAuthenticated } = useContext(AuthContext);
 
@@ -14,7 +13,7 @@ const Navbar = () => {
           <img 
             src={logo} 
             alt="Brand Logo" 
-            style={{ height: '72px' }} // Adjust the height as needed
+            style={{ height: '86px' }}
             className="d-inline-block align-top"
           />
         </Link>

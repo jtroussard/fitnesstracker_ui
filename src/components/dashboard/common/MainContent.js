@@ -4,6 +4,9 @@ import MemberOverview from '../member/views/MemberOverview';
 import MemberProfile from '../member/views/MemberProfile';
 import MemberSettings from '../member/views/MemberSettings';
 import AdminOverview from '../admin/views/AdminOverview';
+import BioEntryView from '../member/views/BioEntryView';
+import FitnessEntryView from '../member/views/FitnessEntryView';
+import NutritionEntryView from '../member/views/NutritionEntryView';
 
 const MainContent = ({ role }) => {
   return (
@@ -12,6 +15,9 @@ const MainContent = ({ role }) => {
         {role === 'ROLE_MEMBER' && (
           <>
             <Route path="overview" element={<MemberOverview />} />
+            <Route path="bio" element={<BioEntryView />} />
+            <Route path="fitness" element={<FitnessEntryView />} />
+            <Route path="nutrition" element={<NutritionEntryView />} />
             <Route path="profile" element={<MemberProfile />} />
             <Route path="settings" element={<MemberSettings />} />
           </>
