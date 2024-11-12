@@ -1,7 +1,7 @@
 import React from "react";
-import './fitness-entry.css';
+import './bio-entry.css';
 
-const FitnessEntryItem = ({ entry, onSelect }) => {
+const BioEntryItem = ({ entry, onSelect }) => {
   if (!entry) {
     console.error("Entry is undefined!");
     return null;
@@ -9,13 +9,13 @@ const FitnessEntryItem = ({ entry, onSelect }) => {
 
   const handleOnClick = () => {
     console.log(`Selecting entry with id: ${entry.id} and entry is ${JSON.stringify(entry)}`);
-    onSelect(entry.id); // Pass entry.id to onSelect
+    onSelect(entry.id);
   }
 
   return (
     <li
       className="list-group-item d-flex justify-content-between align-items-center"
-      onClick={handleOnClick} // Simplify onClick handler
+      onClick={handleOnClick}
       key={entry.id}
     >
       <div>
@@ -26,4 +26,4 @@ const FitnessEntryItem = ({ entry, onSelect }) => {
   );
 };
 
-export default FitnessEntryItem;
+export default BioEntryItem;

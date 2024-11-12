@@ -1,5 +1,6 @@
 import React from 'react';
 import SideNavItem from './SideNavItem';
+import '../../dashboard/Dashboard.css';
 
 const SideNav = ({ navItems, onLogout }) => {
   return (
