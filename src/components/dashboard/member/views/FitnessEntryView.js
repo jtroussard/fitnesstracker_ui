@@ -127,12 +127,8 @@ const FitnessEntryView = () => {
       <h2>Fitness Journal</h2>
       <div className="row g-3">
         <div className="col-12">
-          <LargeTile title="Your Fitness Entries">
-            <BioEntryList
-              entries={entries}
-              onSelectEntry={handleSelectEntry}
-              onAddEntry={handleAddEntry}
-            />
+          <LargeTile>
+            Fitness List Goes Here
           </LargeTile>
         </div>
         {selectedEntryId && (

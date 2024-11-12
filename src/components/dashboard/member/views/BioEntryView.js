@@ -127,7 +127,7 @@ const BioEntryView = () => {
       <h2>Body Metrics</h2>
       <div className="row g-3">
         <div className="col-12">
-          <LargeTile title="Your Fitness Entries">
+          <LargeTile title="Your Body Metric Entries">
             <BioEntryList
               entries={entries}
               onSelectEntry={handleSelectEntry}
