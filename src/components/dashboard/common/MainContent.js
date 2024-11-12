@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext';
 import MemberOverview from '../member/views/MemberOverview';
 import MemberProfile from '../member/views/MemberProfile';
 import MemberSettings from '../member/views/MemberSettings';
@@ -7,31 +8,42 @@ import AdminOverview from '../admin/views/AdminOverview';
 import BioEntryView from '../member/views/BioEntryView';
 import FitnessEntryView from '../member/views/FitnessEntryView';
 import NutritionEntryView from '../member/views/NutritionEntryView';
+import Login from '../../auth/Login';
+import Register from '../../auth/Register';
 
-const MainContent = ({ role }) => {
+const MainContent = () => {
+  const { isAuthenticated, userRoles } = useContext(AuthContext);
+
   return (
     <div className="main-content container-fluid">
       <Routes>
-        {role === 'ROLE_MEMBER' && (
+        {/* Authentication Routes */}
+        {!isAuthenticated && (
           <>
-            <Route path="overview" element={<MemberOverview />} />
-            <Route path="bio" element={<BioEntryView />} />
-            <Route path="fitness" element={<FitnessEntryView />} />
-            <Route path="nutrition" element={<NutritionEntryView />} />
-            <Route path="profile" element={<MemberProfile />} />
-            <Route path="settings" element={<MemberSettings />} />
-          </>
-        )}
-        
-        {/* Admin Routes */}
-        {role === 'ROLE_ADMIN' && (
-          <>
-            <Route path="overview" element={<AdminOverview />} />
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/register" element={<Register />} />
           </>
         )}
 
+        {/* Routes for Member */}
+        {isAuthenticated && userRoles.includes('ROLE_MEMBER') && (
+          <>
+            <Route path="/boards/members/overview" element={<MemberOverview />} />
+            <Route path="/boards/members/bio" element={<BioEntryView />} />
+            <Route path="/boards/members/fitness" element={<FitnessEntryView />} />
+            <Route path="/boards/members/nutrition" element={<NutritionEntryView />} />
+            <Route path="/boards/members/profile" element={<MemberProfile />} />
+            <Route path="/boards/members/settings" element={<MemberSettings />} />
+          </>
+        )}
+
+        {/* Routes for Admin */}
+        {isAuthenticated && userRoles.includes('ROLE_ADMIN') && (
+          <Route path="/boards/admin/overview" element={<AdminOverview />} />
+        )}
+
         {/* Default Redirection */}
-        <Route path="*" element={<Navigate to="overview" />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/boards/members/overview" : "/auth/login"} />} />
       </Routes>
     </div>
   );

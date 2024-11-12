@@ -1,38 +1,45 @@
-/* Body */
-html body {
-  background-color: #f5f5f5;
+/* Base Colors */
+:root {
+  --primary-color: #007bff; /* Accent color */
+  --background-color: #f4f6f8; /* Light gray background */
+  --text-color: #333; /* Dark text */
+  --hover-color: #0056b3; /* Darker blue for hover effects */
 }
 
-/* Navigation */
-.nav-link-no-style {
+/* Typography */
+body {
+  font-family: 'Arial', sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+/* Link Styling */
+a {
+  color: var(--text-color);
   text-decoration: none;
-  color: inherit;
 }
 
-.top-nav {
-  background-color: rgb(207, 207, 207);
-  color: blueviolet;
-  display: flex; /* Use flexbox for horizontal layout */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  padding: 1rem; /* Add padding to create some space around the navbar */
+/* Responsive Layout Adjustments */
+.member-dashboard {
+  display: flex;
+  height: 100vh;
 }
 
-.navbar-fix {
-  padding-top: 0 !important;; /* Remove top padding */
-  padding-bottom: 0 !important;; /* Remove bottom padding */
-}
-
-/* Buttons */
-.btn {
-    display: flex;
-    align-items: center;  /* Vertically center icon and text */
-    justify-content: center;
-    gap: 8px;             /* Space between icon and text */
+@media (max-width: 768px) {
+  .member-dashboard {
+    flex-direction: column;
   }
-  
-  .btn .material-icons {
-    font-size: 1.2rem;    /* Adjust icon size */
-    vertical-align: middle;
+
+  .side-nav {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
   }
-  
+
+  .main-content {
+    padding-top: 20px;
+    padding-bottom: 60px; /* Additional padding for mobile sidebar */
+  }
+}
