@@ -1,9 +1,13 @@
 /* Base Colors */
 :root {
-  --primary-color: #007bff; /* Accent color */
-  --background-color: #f4f6f8; /* Light gray background */
-  --text-color: #333; /* Dark text */
-  --hover-color: #0056b3; /* Darker blue for hover effects */
+  --primary-color: #007bff;
+  /* Accent color */
+  --background-color: #f4f6f8;
+  /* Light gray background */
+  --text-color: #333;
+  /* Dark text */
+  --hover-color: #0056b3;
+  /* Darker blue for hover effects */
 }
 
 /* Typography */
@@ -25,6 +29,29 @@ a {
   height: 100vh;
 }
 
+/* Buttons */
+/* 
+Couldn't get these css rules to work the way I 
+wanted so for now there are bootstrap classes applied 
+to each button breaking DRY need help understanding 
+how to unravel the styling from the bootstrap rules 
+and pack them into a css class for reuse. 
+*/
+/* .btn.fq-btn-center {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 0.5rem !important;
+  padding: 6px 12px;
+  line-height: 1 !important;
+}
+
+.btn.fq-btn-center .material-icons {
+  vertical-align: middle !important;
+  font-size: 1.2rem !important;
+  display: inline-flex;
+} */
+
 @media (max-width: 768px) {
   .member-dashboard {
     flex-direction: column;
@@ -40,6 +67,8 @@ a {
 
   .main-content {
     padding-top: 20px;
-    padding-bottom: 60px; /* Additional padding for mobile sidebar */
+    padding-bottom: 60px;
+    /* Additional padding for mobile sidebar */
   }
+
 }

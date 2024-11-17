@@ -1,8 +1,9 @@
 import React from 'react';
-import SideNav from '../common/SideNav';
-import MainContent from '../common/MainContent';
+import SideNav from '../components/navigation/SideNav';
+import MainContent from '../components/main/MainContent';
+import './layout.css';
 
-const MemberDashboard = ({ onLogout, user }) => {
+const MainLayout = ({ onLogout }) => {
   const navItems = [
     { label: 'Overview', path: '/boards/members/overview', icon: 'dashboard' },
     { label: 'Body Metrics', path: '/boards/members/bio', icon: 'monitor_weight' },
@@ -13,11 +14,11 @@ const MemberDashboard = ({ onLogout, user }) => {
   ];
 
   return (
-    <div className="member-dashboard d-flex">
+    <div className="main-layout">
       <SideNav navItems={navItems} onLogout={onLogout} />
       <MainContent role="ROLE_MEMBER" />
     </div>
   );
 };
 
-export default MemberDashboard;
+export default MainLayout;

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import SideNavItem from './SideNavItem';
-import { AuthContext } from '../../../context/AuthContext';
-import logo from '../../../assets/logo.png';
-import '../../dashboard/Dashboard.css';
+import { AuthContext } from '../../context/AuthContext';
+import logo from '../../assets/logo.png';
+import './navigation.css';
 
 const SideNav = ({ navItems }) => {
   const { handleLogout, isAuthenticated, userRoles } = useContext(AuthContext);
@@ -19,7 +19,7 @@ const SideNav = ({ navItems }) => {
     <nav className="side-nav p-3">
       {/* Logo Section */}
       <div className="side-nav-logo">
-        <img src={logo} alt="App Logo" className="side-nav-logo-img" />
+        <Link to="/"><img src={logo} alt="App Logo" className="side-nav-logo-img" /></Link>
       </div>
 
       {/* Conditional Navigation Items */}
