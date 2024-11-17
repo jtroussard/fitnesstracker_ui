@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';  // Import AuthContext
-import MainButton from './MainButton';
+import MainButton from '../common/controls/MainButton';
 
 const Logout = () => {
   const { handleLogout } = useContext(AuthContext);  // Use AuthContext
