@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 
-// Create AuthContext
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -12,34 +11,39 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO discovered an edge case here, where the role is undefined it actually blows up the whole app
-    // Uncaught SyntaxError: "undefined" is not valid JSON
-    // at JSON.parse (<anonymous>)
-    // at AuthContext.js:14:1
-    // We should handle this error. Probably blast out the localstorage auth stuff and redirect to the login
+    console.log('AuthProvider mounted');
+    const storedJwt = localStorage.getItem('jwt');
+    console.log('Stored JWT:', storedJwt);
+
     const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
-    setUserRoles(storedRoles);
+    console.log('Stored roles on mount:', storedRoles);
+
+    if (storedRoles.length === 0) {
+      console.warn('No roles found in local storage.');
+    } else {
+      setUserRoles(storedRoles);
+    }
   }, []);
 
-  // Helper function to clear authentication data
+  // Helper function to clear authentication data and handle errors
+  const clearAuthDataWithError = (message) => {
+    console.warn('Clearing auth data with message:', message);
+    clearAuthData();
+    toast.error(message);
+    navigate('/auth/login');
+  };
+
   const clearAuthData = () => {
-    console.log('AuthContext: Clearing Auth data.')
+    console.log('Clearing JWT and roles from local storage');
     localStorage.removeItem('jwt');
     localStorage.removeItem('roles');
     setIsAuthenticated(false);
     setUserRoles([]);
-    console.log('AuthContext: Auth data cleared.');
+    console.log('Auth data cleared');
   };
 
-  const clearAndRedirect = () => {
-    console.log('AuthContent :: Invoking clear then redirecting.')
-    clearAuthData();
-    navigate('/auth/login');
-  }
-
-  // TODO consider returning { success: false } in the event of logout failure.
   const handleLogout = async () => {
-    console.log('AuthContext: handleLogout called');
+    console.log('Initiating logout...');
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/logout', {
         method: 'POST',
@@ -49,33 +53,21 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        // TODO Keeping this code here for now because the error loops during development which is annoying.
-        // Research what is a good workflow for logging out.
-        // throw new Error('Logout failed');
-        console.warn('AuthContext :: Token may have expired or the user is not authorized to access this endpoint.');
-        clearAndRedirect();
-      } else if (response.status === 403) {
-        console.warn('AuthContext :: Token may have expired or the user is not authorized to access this endpoint.');
-        toast.warn('Session expired. Please log in again.');
-        clearAndRedirect();
+        console.warn('Logout response not OK. Clearing auth data.');
+        clearAuthDataWithError("You've been logged out.");
       } else {
-        console.log('AuthContext :: Logout successful');
-        clearAndRedirect();
+        console.log('Logout successful. Clearing auth data and navigating to home.');
+        clearAuthData();
+        navigate('/');
       }
     } catch (error) {
-      console.error('AuthContext :: Logout failed', error);
-      if (error.message === 'Failed to fetch') {
-        toast.error('Network error. Retrying logout, please allow for 3 seconds...');
-        setTimeout(handleLogout, 3000);
-      } else {
-        toast.error('Logout failed. Please try again later.');
-      }
+      console.error('Logout failed due to a network error:', error);
+      toast.error('Logout failed due to a network error. Please try again.');
     }
   };
 
-  // Centralized login logic
   const handleLogin = async (credentials) => {
-    console.log('AuthContext: handleLogin called');
+    console.log('Attempting login with credentials:', credentials);
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
@@ -86,37 +78,42 @@ export const AuthProvider = ({ children }) => {
       if (!response.ok) throw new Error('Login failed');
 
       const data = await response.json();
-      // Set token
+      console.log('Login successful, received token:', data.token);
       localStorage.setItem('jwt', data.token);
-      // // Set roles
-      const decodedToken = jwtDecode(data.token);
-      const userRoles = decodedToken.roles || [];
-      // Set state
-      setIsAuthenticated(true);
-      setUserRoles(data.roles);
-      console.log('AuthContext: Login successful');
 
-      // Role-based navigation handled here
-      if (userRoles.includes('ROLE_ADMIN')) {
-        localStorage.setItem('roles', JSON.stringify(userRoles));
-        navigate('/boards/admin');
-      } else if (userRoles.includes('ROLE_MEMBER')) {
-        localStorage.setItem('roles', JSON.stringify(userRoles));
-        navigate('/boards/members');
+      const decodedToken = jwtDecode(data.token);
+      console.log('Decoded token:', decodedToken);
+
+      const roles = decodedToken.roles || [];
+      console.log('Roles extracted from token:', roles);
+
+      if (roles.length === 0) {
+        console.warn('No roles found in token. Prompting re-login.');
+        clearAuthDataWithError("Unable to detect user roles. Please contact support.");
+        return { success: false };
+      }
+
+      setIsAuthenticated(true);
+      setUserRoles(roles);
+      localStorage.setItem('roles', JSON.stringify(roles));
+      console.log('User authenticated. Roles stored in state and local storage:', roles);
+
+      // Redirect based on role
+      if (roles.includes('ROLE_ADMIN')) {
+        console.log('User is admin. Redirecting to admin dashboard.');
+        navigate('/boards/admin/overview');
+      } else if (roles.includes('ROLE_MEMBER')) {
+        console.log('User is member. Redirecting to member overview.');
+        navigate('/boards/members/overview');
       } else {
-        /*
-        * TODO Not sure this flow is correct. Should not ever have no roles.
-        So the redirect makes sense but we should either consider this an
-        error or maybe throw a toast saying try again? Need to consider within 
-        the context fo the workflow what it would be to reach this line of code.
-        */
-        navigate('/auth/login');
+        console.warn('Unknown role detected. Prompting re-login.');
+        clearAuthDataWithError("Unknown role. Please contact support.");
       }
 
       return { success: true };
     } catch (error) {
-      console.error('AuthContext: Login failed', error);
-      toast.error('Login failed. Please check your credentials.');
+      console.error('Login failed:', error.message);
+      toast.error('Login failed. Please check your credentials and try again.');
       return { success: false, error: error.message };
     }
   };
