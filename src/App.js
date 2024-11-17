@@ -14,7 +14,7 @@ function App() {
       <AuthProvider>
         <div className="app-container">
           <MainLayout />
-          <FooterContent /> {/* Global footer here */}
+          <FooterContent /> 
         </div>
         <ToastContainer />
       </AuthProvider>

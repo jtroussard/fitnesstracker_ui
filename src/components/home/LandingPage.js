@@ -17,7 +17,7 @@ const LandingPage = () => {
         <p>Your personal fitness tracking tool. Log your activities, monitor nutrition, and stay motivated on your journey.</p>
       </section>
 
-      {/* Brief Description */}
+      {/* Description Section */}
       <section className="mb-5 text-center">
         <h3>What is Fitness Quest?</h3>
         <p>Fitness Quest is designed to help you track your fitness progress, set goals, and maintain a healthy lifestyle.</p>
@@ -49,14 +49,13 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* App Updates / Blog Section */}
+      {/* Blog Section */}
       <section className="mb-5">
         <h3 className="text-center">Latest Updates</h3>
         <div className="scrolling-updates bg-light p-3" style={{ height: '200px', overflowY: 'scroll' }}>
           <p>Update 1: New nutrition tracking feature added!</p>
           <p>Update 2: Weekly progress insights are now available.</p>
           <p>Update 3: Dark mode option is here.</p>
-          {/* Add more update items as needed */}
         </div>
       </section>
 
