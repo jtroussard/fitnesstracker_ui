@@ -7,8 +7,10 @@
   /* Sidebar styling */
   .side-nav {
     flex-basis: 35%; /* 35% width for the sidebar */
+    border-right-style: solid;
+    border-right-width: 3px;
+    border-right-color: var(--separator-color);
     background-color: var(--background-color);
-    border-right: 1px solid #ddd;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -16,11 +18,12 @@
     overflow-y: auto;
   }
   
+  
   /* Main content area */
   .main-content {
     flex: 1; /* 65% width for main content */
     padding: 20px;
-    background-color: #ffffff;
+    background-color: var(--background-color);
     overflow-y: auto;
     box-sizing: border-box;
   }
@@ -33,6 +36,6 @@
     color: #6c757d;
     text-align: center;
     width: 100%;
-    border-top: 1px solid #ddd;
+    /* border-top: 1px solid #ddd; */
   }
   

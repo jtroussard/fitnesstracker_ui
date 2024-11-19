@@ -11,9 +11,10 @@
 .main-content {
   flex: 1;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: var(--background-color);
   overflow-y: auto;
   box-sizing: border-box;
+  /* --main-content-width: 100%; */
 }
   
   /* Utility Classes for Padding Adjustments */

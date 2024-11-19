@@ -2,12 +2,13 @@
 :root {
   --primary-color: #007bff;
   /* Accent color */
-  --background-color: #f4f6f8;
+  --background-color: #e6e6e6;
   /* Light gray background */
   --text-color: #333;
   /* Dark text */
   --hover-color: #0056b3;
   /* Darker blue for hover effects */
+  --separator-color: #dad1db;
 }
 
 /* Typography */
