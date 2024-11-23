@@ -3,10 +3,13 @@ import { useUser } from '../../../../../context/UserContext';
 import './profile.css';
 import headerPic from '../../../../../assets/green-shapes.jpg';
 import profilePic from '../../../../../assets/avatar.jpg';
+import { userDetailsInitalState } from '../../../../../common/states.js'
 
 const Profile = () => {
-  const { user } = useUser();
   const [activeTab, setActiveTab] = useState('profileDetails');
+  const [userDetails, setUserDetails] = useState({})
+
+
 
   const renderTabContent = () => {
     console.log(`rendering user ${JSON.stringify(user)}`)
