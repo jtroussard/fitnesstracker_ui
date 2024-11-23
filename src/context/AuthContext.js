@@ -1,38 +1,39 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode'; // Fixed to avoid removing your imports
+import { jwtDecode } from 'jwt-decode';
+import routes from '../configs/routes';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt'));
   const [userRoles, setUserRoles] = useState([]);
-  const [userId, setUserId] = useState(null); // Added userId state
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('AuthProvider mounted');
+    console.log('[AuthContext] AuthProvider mounted');
     const storedJwt = localStorage.getItem('jwt');
-    console.log('Stored JWT:', storedJwt);
+    console.log('[AuthContext] Stored JWT:', storedJwt);
 
     if (storedJwt) {
       try {
-        const decodedToken = jwtDecode(storedJwt); // Decode the token from localStorage
-        console.log('Decoded token on mount:', decodedToken);
+        const decodedToken = jwtDecode(storedJwt);
+        console.log('[AuthContext] Decoded token on mount:', decodedToken);
 
-        setUserId(decodedToken.userId); // Extract and set userId
-        setUserRoles(decodedToken.roles || []); // Extract roles
+        setUserId(decodedToken.userId);
+        setUserRoles(decodedToken.roles || []);
       } catch (error) {
         console.error('Error decoding token on mount:', error);
-        clearAuthData(); // Clear any invalid data
+        clearAuthData();
       }
     } else {
       console.warn('No JWT found in local storage.');
     }
   }, []);
 
-  // Clears auth data and redirects to login with error message
+ 
   const clearAuthDataWithError = (message) => {
     console.warn('Clearing auth data with message:', message);
     clearAuthData();
@@ -41,17 +42,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const clearAuthData = () => {
-    console.log('Clearing JWT and roles from local storage');
+    console.log('[AuthContext] Clearing JWT and roles from local storage');
     localStorage.removeItem('jwt');
     localStorage.removeItem('roles');
     setIsAuthenticated(false);
-    setUserId(null); // Reset userId
+    setUserId(null);
     setUserRoles([]);
-    console.log('Auth data cleared');
+    console.log('[AuthContext] Auth data cleared');
   };
 
   const handleLogout = async () => {
-    console.log('Initiating logout...');
+    console.log('[AuthContext] Initiating logout...');
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/logout', {
         method: 'POST',
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         console.warn('Logout response not OK. Clearing auth data.');
         clearAuthDataWithError("You've been logged out.");
       } else {
-        console.log('Logout successful. Clearing auth data and navigating to home.');
+        console.log('[AuthContext] Logout successful. Clearing auth data and navigating to home.');
         clearAuthData();
         navigate('/');
       }
@@ -75,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogin = async (credentials) => {
-    console.log('Attempting login with credentials:', credentials);
+    console.log('[AuthContext] Attempting login with credentials:', credentials);
     try {
       const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
@@ -87,14 +88,15 @@ export const AuthProvider = ({ children }) => {
 
       const payload = await response.json();
       const data = payload.data;
-      console.log('Login successful, received token:', data.token);
+      console.log('[AuthContext] Login successful, received token:', data.token);
       localStorage.setItem('jwt', data.token);
 
       const decodedToken = jwtDecode(data.token);
-      console.log('Decoded token:', decodedToken);
+      console.log('[AuthContext] Decoded token:', decodedToken);
 
       const roles = decodedToken.roles || [];
-      console.log('Roles extracted from token:', roles);
+      console.log('[AuthContext] Roles extracted from token:', roles);
+      console.log('[AuthContext] User Id extracted from token', decodedToken.userId);
 
       if (roles.length === 0) {
         console.warn('No roles found in token. Prompting re-login.');
@@ -103,18 +105,18 @@ export const AuthProvider = ({ children }) => {
       }
 
       setIsAuthenticated(true);
-      setUserId(decodedToken.userId); // Set userId from token
+      setUserId(decodedToken.userId);
       setUserRoles(roles);
       localStorage.setItem('roles', JSON.stringify(roles));
-      console.log('User authenticated. Roles stored in state and local storage:', roles);
+      console.log('[AuthContext] User authenticated. Roles stored in state and local storage:', roles);
 
-      // Redirect based on role
+     
       if (roles.includes('ROLE_ADMIN')) {
-        console.log('User is admin. Redirecting to admin dashboard.');
-        navigate('/boards/admin/overview');
+        console.log('[AuthContext] User is admin. Redirecting to admin dashboard.');
+        navigate(routes.admin.find(route => route.name === 'AdminOverview').path);
       } else if (roles.includes('ROLE_MEMBER')) {
-        console.log('User is member. Redirecting to member overview.');
-        navigate('/boards/members/overview');
+        console.log(`[AuthContext] User is member # ${userId}. Redirecting to member overview.`);
+        navigate(routes.member.find(route => route.name === 'MemberOverview').path);
       } else {
         console.warn('Unknown role detected. Prompting re-login.');
         clearAuthDataWithError("Unknown role. Please contact support.");

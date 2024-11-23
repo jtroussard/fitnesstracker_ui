@@ -1,25 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
-import MainLayout from './layouts/MainLayout';
+import MainLayout from './components/layouts/MainLayout';
+import './components/layouts/layout.css';
 import FooterContent from './components/footer/FooterContent';
-import './layouts/layout.css';
-import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <UserProvider>
+        <ErrorBoundary >
           <div className="app-container">
             <MainLayout />
             <FooterContent />
           </div>
           <ToastContainer />
-        </UserProvider>
+          </ErrorBoundary>
       </AuthProvider>
     </Router>
   );

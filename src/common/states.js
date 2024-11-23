@@ -1,5 +1,26 @@
-export const userDetailsInitalState = {
-    memberName: "",
-    memberEmail: "",
-    
-}
+export const memberDetailsInitialState = {
+    // MemberDetails
+    id: null,
+    memberId: null,
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    phoneNumber: "",
+    country: "",
+    state: "",
+    city: "",
+    address: "",
+    joinDate: null,
+    profilePictureUrl: "",
+    bannerPictureUrl: "",
+    userTag: "",
+    personalWebsite: "",
+    bio: "",
+    gender: "",
+    dob: null,
+    createdAt: null,
+    updatedAt: null,
+    // Additional fields from Member
+    username: "",
+    emailAddress: "",
+};
