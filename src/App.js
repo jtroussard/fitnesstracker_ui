@@ -7,16 +7,19 @@ import './App.css';
 import MainLayout from './layouts/MainLayout';
 import FooterContent from './components/footer/FooterContent';
 import './layouts/layout.css';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="app-container">
-          <MainLayout />
-          <FooterContent /> 
-        </div>
-        <ToastContainer />
+        <UserProvider>
+          <div className="app-container">
+            <MainLayout />
+            <FooterContent />
+          </div>
+          <ToastContainer />
+        </UserProvider>
       </AuthProvider>
     </Router>
   );

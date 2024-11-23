@@ -1,13 +1,14 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Fixed to avoid removing your imports
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt'));
   const [userRoles, setUserRoles] = useState([]);
+  const [userId, setUserId] = useState(null); // Added userId state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,17 +16,23 @@ export const AuthProvider = ({ children }) => {
     const storedJwt = localStorage.getItem('jwt');
     console.log('Stored JWT:', storedJwt);
 
-    const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
-    console.log('Stored roles on mount:', storedRoles);
+    if (storedJwt) {
+      try {
+        const decodedToken = jwtDecode(storedJwt); // Decode the token from localStorage
+        console.log('Decoded token on mount:', decodedToken);
 
-    if (storedRoles.length === 0) {
-      console.warn('No roles found in local storage.');
+        setUserId(decodedToken.userId); // Extract and set userId
+        setUserRoles(decodedToken.roles || []); // Extract roles
+      } catch (error) {
+        console.error('Error decoding token on mount:', error);
+        clearAuthData(); // Clear any invalid data
+      }
     } else {
-      setUserRoles(storedRoles);
+      console.warn('No JWT found in local storage.');
     }
   }, []);
 
-  // Helper function to clear authentication data and handle errors
+  // Clears auth data and redirects to login with error message
   const clearAuthDataWithError = (message) => {
     console.warn('Clearing auth data with message:', message);
     clearAuthData();
@@ -38,6 +45,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('jwt');
     localStorage.removeItem('roles');
     setIsAuthenticated(false);
+    setUserId(null); // Reset userId
     setUserRoles([]);
     console.log('Auth data cleared');
   };
@@ -77,7 +85,8 @@ export const AuthProvider = ({ children }) => {
 
       if (!response.ok) throw new Error('Login failed');
 
-      const data = await response.json();
+      const payload = await response.json();
+      const data = payload.data;
       console.log('Login successful, received token:', data.token);
       localStorage.setItem('jwt', data.token);
 
@@ -94,6 +103,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       setIsAuthenticated(true);
+      setUserId(decodedToken.userId); // Set userId from token
       setUserRoles(roles);
       localStorage.setItem('roles', JSON.stringify(roles));
       console.log('User authenticated. Roles stored in state and local storage:', roles);
@@ -119,7 +129,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userRoles, handleLogout, handleLogin }}>
+    <AuthContext.Provider value={{ isAuthenticated, userId, userRoles, handleLogout, handleLogin }}>
       {children}
     </AuthContext.Provider>
   );

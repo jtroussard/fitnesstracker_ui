@@ -1,6 +1,8 @@
 # Fitness Quest Tracker
 
 ## Pin
+get user context working
+
 member overview - chart - no filters or setters for now - bio data only
 member profile page
 member profile data CRUD
