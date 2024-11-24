@@ -1,17 +1,18 @@
-import {React, useContext } from 'react';
+import React from 'react';
+import Extractor from '../../utils/Extractor';
 import SideNav from '../navigation/SideNav';
 import MainContent from '../main/MainContent';
-import { AuthContext } from '../../context/AuthContext.js';
-import routes from '../../configs/routes.js';
 import './layout.css';
 
 const MainLayout = ({ onLogout }) => {
-  const { userId } = useContext(AuthContext);
+
+  const token = localStorage.getItem('jwt');
+  const id = Extractor.extractId(token);
 
   return (
     <div className="main-layout">
       <SideNav onLogout={onLogout} />
-      <MainContent memberId={userId} />
+      <MainContent />
     </div>
   );
 };

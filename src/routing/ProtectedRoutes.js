@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import routes from '../configs/routes';
 import NotFound from '../components/common/NotFound';
+import Extractor from '../utils/Extractor';
 
 const ProtectedRoutes = () => {
   const { isAuthenticated, userRoles, userId } = useContext(AuthContext);
@@ -10,6 +11,9 @@ const ProtectedRoutes = () => {
   console.log('[ProtectedRoutes] isAuthenticated:', isAuthenticated);
   console.log('[ProtectedRoutes] userRoles:', userRoles);
   console.log('[ProtectedRoutes] userId:', userId);
+
+  const id = Extractor.extractId(localStorage.getItem('jwt'));
+  console.log('[ProtectedRoutes] extractor userId:', id);
 
   const renderRoutes = () => {
     const userRoutes = [...routes.public];
@@ -20,6 +24,10 @@ const ProtectedRoutes = () => {
     }
 
     if (userRoles.includes('ROLE_MEMBER')) {
+      if (userId === undefined) {
+        console.log('[ProtectedRoutes] User is a member but userId is undefined. Showing loading state.');
+        return [{ path: '*', element: () => <div>Loading...</div> }]; // Temporary loading route
+      }
       console.log(`[ProtectedRoutes] User has ROLE_MEMBER with member id ${userId}. Adding member routes.`);
       userRoutes.push(
         ...routes.member.map(route => ({

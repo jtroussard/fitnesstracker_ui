@@ -9,7 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwt'));
   const [userRoles, setUserRoles] = useState([]);
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(undefined);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,8 +22,8 @@ export const AuthProvider = ({ children }) => {
         const decodedToken = jwtDecode(storedJwt);
         console.log('[AuthContext] Decoded token on mount:', decodedToken);
 
-        setUserId(decodedToken.userId);
         setUserRoles(decodedToken.roles || []);
+        setUserId(decodedToken.userId || 0)
       } catch (error) {
         console.error('Error decoding token on mount:', error);
         clearAuthData();
@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
- 
   const clearAuthDataWithError = (message) => {
     console.warn('Clearing auth data with message:', message);
     clearAuthData();
@@ -46,8 +45,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('jwt');
     localStorage.removeItem('roles');
     setIsAuthenticated(false);
-    setUserId(null);
     setUserRoles([]);
+    setUserId(undefined);
     console.log('[AuthContext] Auth data cleared');
   };
 
@@ -96,7 +95,6 @@ export const AuthProvider = ({ children }) => {
 
       const roles = decodedToken.roles || [];
       console.log('[AuthContext] Roles extracted from token:', roles);
-      console.log('[AuthContext] User Id extracted from token', decodedToken.userId);
 
       if (roles.length === 0) {
         console.warn('No roles found in token. Prompting re-login.');
@@ -104,18 +102,26 @@ export const AuthProvider = ({ children }) => {
         return { success: false };
       }
 
+      const userId = decodedToken.userId || 0;
+      console.log('[AuthContext] User id extracted from token:', userId);
+
+      if (userId === 0) {
+        console.warn('No userId found in token. Prompting re-login.');
+        clearAuthDataWithError("Unable to detect user id. Please contact support.");
+        return { success: false };
+      }
+
       setIsAuthenticated(true);
-      setUserId(decodedToken.userId);
       setUserRoles(roles);
+      setUserId(userId);
       localStorage.setItem('roles', JSON.stringify(roles));
       console.log('[AuthContext] User authenticated. Roles stored in state and local storage:', roles);
 
-     
       if (roles.includes('ROLE_ADMIN')) {
         console.log('[AuthContext] User is admin. Redirecting to admin dashboard.');
         navigate(routes.admin.find(route => route.name === 'AdminOverview').path);
       } else if (roles.includes('ROLE_MEMBER')) {
-        console.log(`[AuthContext] User is member # ${userId}. Redirecting to member overview.`);
+        console.log('[AuthContext] User is member. Redirecting to member overview. -> ', routes.member.find(route => route.name === 'MemberOverview').path);
         navigate(routes.member.find(route => route.name === 'MemberOverview').path);
       } else {
         console.warn('Unknown role detected. Prompting re-login.');
@@ -131,7 +137,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, userRoles, handleLogout, handleLogin }}>
+    <AuthContext.Provider value={{ isAuthenticated, userRoles, userId, handleLogout, handleLogin }}>
       {children}
     </AuthContext.Provider>
   );
